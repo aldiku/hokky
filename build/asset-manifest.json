@@ -1,33 +1,37 @@
 {
   "files": {
     "main.css": "/static/css/main.a15c396b.chunk.css",
-    "main.js": "/static/js/main.b53941ad.chunk.js",
-    "main.js.map": "/static/js/main.b53941ad.chunk.js.map",
+    "main.js": "/static/js/main.4055d701.chunk.js",
+    "main.js.map": "/static/js/main.4055d701.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.33a5256b.js",
     "runtime-main.js.map": "/static/js/runtime-main.33a5256b.js.map",
     "static/css/2.9882b15f.chunk.css": "/static/css/2.9882b15f.chunk.css",
-    "static/js/2.6280a35a.chunk.js": "/static/js/2.6280a35a.chunk.js",
-    "static/js/2.6280a35a.chunk.js.map": "/static/js/2.6280a35a.chunk.js.map",
+    "static/js/2.57a013d6.chunk.js": "/static/js/2.57a013d6.chunk.js",
+    "static/js/2.57a013d6.chunk.js.map": "/static/js/2.57a013d6.chunk.js.map",
     "index.html": "/index.html",
     "static/css/2.9882b15f.chunk.css.map": "/static/css/2.9882b15f.chunk.css.map",
     "static/css/main.a15c396b.chunk.css.map": "/static/css/main.a15c396b.chunk.css.map",
-    "static/js/2.6280a35a.chunk.js.LICENSE.txt": "/static/js/2.6280a35a.chunk.js.LICENSE.txt",
-    "static/js/main.b53941ad.chunk.js.LICENSE.txt": "/static/js/main.b53941ad.chunk.js.LICENSE.txt",
+    "static/js/2.57a013d6.chunk.js.LICENSE.txt": "/static/js/2.57a013d6.chunk.js.LICENSE.txt",
+    "static/js/main.4055d701.chunk.js.LICENSE.txt": "/static/js/main.4055d701.chunk.js.LICENSE.txt",
     "static/media/Hokky1.gif": "/static/media/Hokky1.5d756185.gif",
     "static/media/Hokky1.png": "/static/media/Hokky1.d4361cfd.png",
     "static/media/argon-react.png": "/static/media/argon-react.128d71d3.png",
+    "static/media/buku-besar.png": "/static/media/buku-besar.eb3452af.png",
     "static/media/campur.png": "/static/media/campur.8aa44f48.png",
     "static/media/das.png": "/static/media/das.531a0133.png",
     "static/media/edc.png": "/static/media/edc.8ed48869.png",
     "static/media/all.min.css": "/static/media/fa-solid-900.f4f93856.woff",
-    "static/media/img-1-1000x600.jpg": "/static/media/img-1-1000x600.3869811c.jpg",
-    "static/media/nucleo.css": "/static/media/nucleo-icons.d6a66724.ttf"
+    "static/media/laba-rugi.png": "/static/media/laba-rugi.a9aa84eb.png",
+    "static/media/neraca.png": "/static/media/neraca.49004fe9.png",
+    "static/media/nucleo.css": "/static/media/nucleo-icons.d6a66724.ttf",
+    "static/media/penyesuaian.png": "/static/media/penyesuaian.282efd92.png",
+    "static/media/umum.png": "/static/media/umum.547b315e.png"
   },
   "entrypoints": [
     "static/js/runtime-main.33a5256b.js",
     "static/css/2.9882b15f.chunk.css",
-    "static/js/2.6280a35a.chunk.js",
+    "static/js/2.57a013d6.chunk.js",
     "static/css/main.a15c396b.chunk.css",
-    "static/js/main.b53941ad.chunk.js"
+    "static/js/main.4055d701.chunk.js"
   ]
 }
