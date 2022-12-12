@@ -1,0 +1,542 @@
+/*eslint-disable*/
+import React, { useEffect, useState } from 'react';
+import { 
+    Card, 
+    Button, 
+    Row, 
+    Col, 
+    CardBody, 
+    CardHeader, 
+    Container,
+    ButtonGroup, 
+    Form, 
+    FormGroup, 
+    Label, 
+    Input, 
+    ButtonDropdown, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem
+} from 'reactstrap';
+import { Link } from "react-router-dom";
+import axios from 'axios';
+import SimpleHeader from "components/Headers/SimpleHeader.js";
+import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import BootstrapTable from "react-bootstrap-table-next";
+import paginationFactory from "react-bootstrap-table2-paginator";
+
+import * as FileSaver from "file-saver";
+import * as XLSX from "xlsx";
+
+import {PDFDownloadLink} from '@react-pdf/renderer';
+import PdfReportSo from './Pdf';
+
+
+const LaporanStok = () => {
+  const token = localStorage.token;
+  const warehouse = parseInt(localStorage.warehouse);
+  const [rowIndex, setRowIndex] = useState(0);
+  const [allPenawaranSo, setAllPenawaranSo] = useState([]);
+  const [status, setStatus] = useState(0);
+  const [description, setDescription] = useState("");
+  const [page, setPage] = useState(1);
+  const [perPage, setPerpage] = useState(1000000);
+  const [totalItem, setTotalItem] = useState(0);
+  const [currentSort, setCurrentSort] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [statusph, setStatusph] = useState("");
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isSearchShoww, setIsSearchShoww] = useState(false);
+  const [itemIdd, setItemIdd] = useState("");
+const [allItemm, setAllItemm] = useState([]);
+const [queryy, setQueryy] = useState("");
+  const [editingItem, setEditingitem] = useState([{ editing: false}]);
+  const [addingItem, setAddingItem] = useState(false);
+  const headers = { Authorization: `Bearer ${token}` };
+  const [qtyTotal, setTotalQty] = useState(0);
+  const [itemId, setItemId] = useState(1);
+
+  const searchh = async () => {
+    if (Number(queryy) > 0) {
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/items`, { item_name: queryy , warehouse_id: parseInt(warehouse),  }, { headers });
+      if (res.data.status !== 404) setAllItemm(res.data);
+      else {
+        const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/items`, { item_name: queryy, warehouse_id: parseInt(warehouse), }, { headers });
+        if (res.data.status !== 404) setAllItemm(res.data);
+        else setAllItemm(null);
+      }
+    } else {
+      const res = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/items`, { item_name: queryy, warehouse_id: parseInt(warehouse), }, { headers });
+      if (res.data.status !== 404) setAllItemm(res.data);
+      else setAllItemm(null);
+    }
+    setIsSearchShoww(true);
+  };
+
+  const searchShow = (item) => {
+    setItemId(item.id);
+    setQueryy(item.id);
+    setIsSearchShoww(false);
+};
+
+  const saveItem = (item) => {
+
+    axios.post(`${process.env.REACT_APP_API_BASE_URL}/items`, {
+        page: 1,
+        per_page: 1,
+        item_name: queryy,
+        warehouse_id : parseInt(warehouse),
+    }).then(res => {
+        const length = res.data.response.length;
+        if (length === 0)
+            return;
+            const idItem = res.data.response[0].id;
+            setItemIdd(idItem)
+            console.log(itemIdd);
+            axios.get(`${process.env.REACT_APP_API_BASE_URL}/items/${idItem}`)
+            .then(async response => {
+                return {
+                    item: response.data.response,
+                };
+              }).then((data) => {
+                setItemIdd(idItem);
+                console.log(itemIdd);
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+    });
+}
+
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    {
+    //   setQueryy("");
+    //   setIsSearchShoww("");
+      return true
+    }
+  };
+  
+  let paginationOption = {
+    page: page,
+    alwaysShowAllBtns: true,
+    override: true,
+    showTotal: true,
+    withFirstAndLast: false,
+    sizePerPage: perPage,
+    totalSize: totalItem,
+    onPageChange: (page) => {
+      updateDataTable(page, perPage, currentSort,itemId ,status,start, end, );
+    },
+    sizePerPageRenderer: () => (
+      <div className="dataTables_length" id="datatable-basic_length">
+        <label>
+          Show{" "}
+          {
+            <select
+              name="datatable-basic_length"
+              aria-controls="datatable-basic"
+              className="form-control form-control-sm"
+              onChange={(e) => {
+                updateDataTable(page, e.target.value, currentSort)
+              }}
+            >
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+            </select>
+          }{" "}
+          entries.
+        </label>
+      </div>
+    ),
+  }
+
+  const updateDataTable = (page, perPage, sort,queryy,itemId,status, start,end) => {
+    setPage(page);
+    setPerpage(perPage);
+    setRowIndex((page - 1) * perPage);
+    setCurrentSort(sort);
+    setStart(start);
+    setEnd(end);
+    setItemId(itemId);
+    setQueryy(queryy);
+    setStatus(status);
+    getPenawaranSo(page, perPage, sort,queryy,itemId,status,start,end);
+  }
+
+  const handleTableChange = (type, { sortField, sortOrder }) => {
+    if (type === "sort") {
+      let sort = `${sortField} ${sortOrder}`
+      updateDataTable(page, perPage, sort,itemId,status,start,end,)
+    }
+  }
+
+  
+  useEffect(() => {
+    // getPenawaranSo(page, perPage, currentSort);
+  }, []);
+
+  // fungsi dari ambil data
+  const getPenawaranSo = async (page, perPage, currentSort,queryy='',itemId='',status='', start='',end='') => {
+    
+    let filter = { 
+      page: page, 
+      per_page: perPage,
+      warehouse_id : parseInt(warehouse)
+    };
+    // if (queryy !== '') {
+    //     filter = Object.assign(filter, { item_id: queryy })
+    //   }
+    if (itemId !== '') {
+        filter = Object.assign(filter, { item_id: itemId })
+      }
+    if (status !== '') {
+        filter = Object.assign(filter, { status: status })
+      }
+    if (start !== '') {
+      filter = Object.assign(filter, { start_date: start })
+    }
+    if (end !== '') {
+      filter = Object.assign(filter, { end_date: end })
+    }
+    const data = filter;
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+    axios
+      .post(`${process.env.REACT_APP_API_BASE_URL}/log-stock/page`, data, {
+        headers,
+      })
+      .then((data) => {
+        setAllPenawaranSo(data.data.response);
+        setPage(data.data.current_page + 1);
+        setPerpage(data.data.per_page);
+        setTotalItem(data.data.total_item);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+
+  const downloadExcel = async ()=> {
+    var fileName = 'Laporan-So'
+    // get data all by filter
+    var filter = { 
+      page: page,
+      per_page: 100000,
+      warehouse_id : parseInt(warehouse)
+    };
+    if (itemId !== '') {
+        filter = Object.assign(filter, { item_id: status })
+      }
+    if (status !== '') {
+        filter = Object.assign(filter, { status: status })
+      }
+    if (start !== '') {
+      filter = Object.assign(filter, { start_date: start })
+    }
+    if (end !== '') {
+      filter = Object.assign(filter, { end_date: end })
+    }
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    };
+    axios
+      .post(`${process.env.REACT_APP_API_BASE_URL}/log-stock/page`, filter, {
+        headers,
+      })
+      .then((res) => {
+        var apiData = res.data.response.map((i)=>{
+          return {
+            // 'So Code' : i.no,
+            'Tanggal Buat' : i.created_at ,
+            'Cabang' : i.warehouse_id ,
+            // 'Tipe Penjualan' : i. ,
+            'No SO' : i.so_code ,
+            'Sales' : i.sales ,
+            'Customer' : i.customer_id ,
+            'Alamat' : i.manual_address ,
+            // 'Jenis Pembayaran' : i. ,
+            'Total QTY' : i.qty_total ,
+            'Total Harga' : i.price_total ,
+            'PPN' : i.persen_pajak ,
+            'Total Diskon' : i.diskon_total ,
+            'Total Promo' : i.promo_total,
+            'Total Pembayaran' : i.payment_total,
+            // 'No' : i. ,
+            // 'Item' : i. ,
+            // 'Kode' : i. ,
+            // 'QTY' : i. ,
+            // 'Diskon %' : i. ,
+            // 'Diskon Rp' : i. ,
+            // 'Sub Total' : i. ,
+            // 'No' : i. ,
+            // 'Kode Promo' : i. ,
+            // 'Total Promo' : i. ,
+            // 'So Code' : i.so_code,
+            // 'Address' : i.manual_address,
+            // 'Total Barang' : i.qty_total,
+            // 'Harga Total' : i.price_total,
+            // 'Diskon Total' : i.diskon_total,
+            // 'Harga ongkir' : i.ongkir,
+            // 'Harga Payment' : i.payment_total,
+            // 'Keterangan' : i.keterangan,
+          }
+        });
+        const ws = XLSX.utils.json_to_sheet(apiData);
+        const fileType ="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+        const fileExtension = ".xlsx";
+        const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
+        const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, fileName + fileExtension);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  return (
+    <>
+        <SimpleHeader name="Laporan Stok" parentName="Report" />
+        <Container className="mt--6" fluid>
+        <Row>
+          <div className="col">
+          <Card className="bg-secondary shadow">
+              <CardHeader className="bg-white border-0">
+                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                  <h3>Laporan Stok</h3>
+                  {/* <div style={{ textAlign: 'right' }}>
+                    <Link className="btn btn-info" to="/admin/sales-order/so-penawaran/create">
+                      Tambah
+                    </Link>
+                  </div> */}
+                </div>
+              </CardHeader>
+              <CardBody>
+                      <Form>
+                        <Row md="12">
+                        <Col md="" sm="6">
+                            <FormGroup>
+                              <Label>Item</Label>
+                                <Form onSubmit={handleSubmit}>
+                                          <Input
+                                            autoComplete="off"
+                                            placeholder="Masukan Item Manual"
+                                            type="search"
+                                            onKeyDown={searchh}
+                                            value={itemId}
+                                            onChange={e => updateDataTable(1, perPage, currentSort, e.target.value,status,start,end)}
+                                          />
+                                          {/* <Button type="submit"><i className="fa fa-search" /></Button> */}
+                                </Form>
+                                {isSearchShoww && queryy && (
+                                        <Card className="position-sticky boxShadow" style={{ maxHeight: "15.5rem", overflowY: "auto", paddingTop: "1rem", position: "relative" }}>
+                                          <div style={{ position: "absolute", top: "2.5px", right: "1rem", cursor: "pointer", fontSize: "1rem" }}>
+                                            <i className="fas fa-window-close text-danger" onClick={() => setIsSearchShoww(false)}></i>
+                                          </div>
+                                          {allItemm?.response ? (
+                                            allItemm.response.map((item) => (
+                                              <CardBody key={item.id} style={{ minHeight: "6rem", padding: "1rem" }} className="bgSearch" onClick={() => {searchShow(item);setIsSearchShoww(false);}}>
+                                                <div>
+                                                  <b>Nama item:</b> {item.item_name}
+                                                </div>
+                                              </CardBody>
+                                            ))
+                                          ) : (
+                                            <div className="text-center mb-3 text-danger">Item "{queryy}" tidak ada bosku!</div>
+                                          )}
+                                        </Card>
+                                      )}
+                            </FormGroup>
+                          </Col>
+                          <Col md="" sm="6">
+                            <FormGroup>
+                              <Label>Status</Label>
+                              <Input
+                                className="form-control-alternative"
+                                name="statusph"
+                                type="select"
+                                value={statusph}
+                                onChange={e => updateDataTable(1, perPage, currentSort, itemId,e.target.value,start,end )}
+                              >
+                                  <option value="" disabled selected hidden>--All--</option>
+                                  <option value="3">Proses</option>
+                                  <option value="4">Ditolak</option>
+                                  <option value="5">Disetujui</option>
+                              </Input>
+                            </FormGroup>
+                          </Col>
+                            <Col md="" sm="6">
+                            <FormGroup>
+                              <Label>Start Date</Label>
+                              <Input
+                                className="form-control-alternative"
+                                name="start"
+                                type="date"
+                                value={start}
+                                onChange={e => updateDataTable(1, perPage, currentSort, itemId, status,e.target.value,end)}
+                              >
+                              </Input>
+                            </FormGroup>
+                          </Col>
+                          <Col md="" sm="6">
+                            <FormGroup>
+                              <Label>End Date</Label>
+                              <Input
+                                className="form-control-alternative"
+                                name="end"
+                                type="date"
+                                value={end}
+                                onChange={e => updateDataTable(1, perPage, currentSort, itemId,status,start,e.target.value,)}
+                              >
+                              </Input>
+                            </FormGroup>
+                          </Col>
+                         
+                          {/* <Col md="" sm="6">
+                            <FormGroup>
+                              <Label htmlFor="exampleFormControlSelect3">Status</Label>
+                              <Input
+                                className="form-control-alternative"
+                                name="Tipe So"
+                                type="select"
+                                value={status}
+                                onChange={e => updateDataTable(1, perPage, currentSort, e.target.value, description,start,end,statusph)}
+                              >
+                                <option value="">Pilih Sales Order</option>
+                                <option value="1">Cahsier</option>
+                                <option value="2">Project</option>
+                                <option value="3">E-commerce</option>
+                                <option value="4">Canvaser</option>
+                              </Input>
+                            </FormGroup>
+                          </Col> */}
+                          <Col md="" sm="6">
+                          <Label>&nbsp;</Label>
+                          <br></br>
+                            <Button type='button' onClick={e => updateDataTable(1, perPage, currentSort, start, end, statusph)} className="btn btn-info"><i className="fa fa-filter"></i></Button>
+                            {/* <ButtonDropdown isOpen={dropdownOpen} toggle={() => setDropdownOpen(true)}> */}
+                            <UncontrolledDropdown nav>
+                              <DropdownToggle caret color="primary">
+                                Download
+                              </DropdownToggle>
+                              <DropdownMenu>
+                                <DropdownItem onClick={()=> {downloadExcel(allPenawaranSo)}}>Excel</DropdownItem>
+                                {/* <DropdownItem>PDF</DropdownItem> */}
+                                <DropdownItem>
+                                  <PDFDownloadLink
+                                      document={
+                                      <PdfReportSo data={{start, end, statusph}}/>}
+                                      fileName="Report Stok.pdf"
+                                      style={{color: '#000'}}>
+                                        PDF
+                                  </PDFDownloadLink>
+                                </DropdownItem>
+                              </DropdownMenu>
+                            </UncontrolledDropdown>
+                            {/* </ButtonDropdown> */}
+                          </Col>
+                        </Row>
+                      </Form>
+                    <ToolkitProvider
+                            rowNumber={rowIndex}
+                            data={allPenawaranSo}
+                            keyField="id"
+                            columns={[
+                            {
+                                dataField: "no",
+                                text: "#",
+                                sort: true,
+                                page: 1,
+                                formatter: (cell, row, index) => {
+                                let currentRow = ++index;
+                                return currentRow + rowIndex;
+                                },
+                            },
+                            {
+                              dataField: "created_at",
+                              text: "Tanggal Buat",
+                              sort: true,
+                            },
+                            {
+                                dataField: "so_code",
+                                text: "Kode SO",
+                                sort: true,
+                            },
+                            {
+                                dataField: "customer_name",
+                                text: "Customer",
+                                sort: true,
+                            },
+                            {
+                                dataField: "qty_total",
+                                text: "Jumlah Total",
+                                sort: true,
+                            },
+                            {
+                                dataField: "status_ph",
+                                text: "Status",
+                                sort: true,
+                                formatter: (cell, row) => {
+                                  return row.status_ph === 3
+                                    ? 'proses'
+                                    : row.status_ph === 4
+                                    ? 'Tidak Setuju'
+                                    : 'Setuju';
+                                },
+                            },
+                            // {
+                            //     dataField: "", text: "", formatter: (cell, row, index) => {
+                            //     return (
+                            //         <ButtonGroup>
+                            //         <Button>
+                            //             <Link
+                            //             to={redirectPrefix + row.id}
+                            //             id={"tooltip_" + row.id}
+                            //             >
+                            //             <i className="fas fa-user-edit" /> Edit
+                            //             </Link>
+                            //         </Button>
+                            //         &nbsp;
+                            //         <Button>
+                            //             <Link
+                            //             to={redirectPrefix1 + row.id}
+                            //             id={"tooltip1_" + row.id}
+                            //             >
+                            //             <i className="fas fa-user-edit" /> Detail
+                            //             </Link>
+                            //         </Button>
+                            //         </ButtonGroup>
+                            //       )
+                            //     }
+                            //   },
+                            ]}
+                        >
+                            {(props) => (
+                            <div className="py-4 table-responsive">
+                                <BootstrapTable
+                                remote
+                                {...props.baseProps}
+                                bootstrap4={true}
+                                bordered={false}
+                                hover={true}
+                                // pagination={paginationFactory({ ...paginationOption })}
+                                // onTableChange={handleTableChange}
+                                />
+                            </div>
+                          )}
+                    </ToolkitProvider>
+              </CardBody>
+            </Card>
+          </div>
+        </Row>
+        </Container>
+    </>
+  );
+}
+
+export default LaporanStok;
