@@ -1,22 +1,25 @@
 /*eslint-disable*/
-import React, { useEffect, useState } from 'react';
-import { 
-    Card, 
-    Button, 
-    Row, 
-    Col, 
-    CardBody, 
-    CardHeader, 
-    ButtonGroup, 
-    Form, 
-    FormGroup, 
-    Label, 
-    Input ,
-    DropdownItem,DropdownMenu, UncontrolledDropdown, DropdownToggle
-} from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  CardBody,
+  CardHeader,
+  ButtonGroup,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  DropdownItem,
+  DropdownMenu,
+  UncontrolledDropdown,
+  DropdownToggle,
+} from "reactstrap";
 import { Link } from "react-router-dom";
-import axios from 'axios';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import axios from "axios";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
@@ -33,7 +36,7 @@ const PenawaranSo = () => {
   const [perPage, setPerpage] = useState(10);
   const [totalItem, setTotalItem] = useState(0);
   const [currentSort, setCurrentSort] = useState("");
-  
+
   let paginationOption = {
     page: page,
     alwaysShowAllBtns: true,
@@ -55,7 +58,7 @@ const PenawaranSo = () => {
               aria-controls="datatable-basic"
               className="form-control form-control-sm"
               onChange={(e) => {
-                updateDataTable(page, e.target.value, currentSort)
+                updateDataTable(page, e.target.value, currentSort);
               }}
             >
               <option value="10">10</option>
@@ -68,7 +71,7 @@ const PenawaranSo = () => {
         </label>
       </div>
     ),
-  }
+  };
 
   const updateDataTable = (page, perPage, sort, status, description) => {
     getPenawaranSo(page, perPage, sort, status, description);
@@ -78,36 +81,39 @@ const PenawaranSo = () => {
     setCurrentSort(sort);
     setStatus(status);
     setDescription(description);
-  }
+  };
 
   const handleTableChange = (type, { sortField, sortOrder }) => {
     if (type === "sort") {
-      let sort = `${sortField} ${sortOrder}`
-      updateDataTable(page, perPage, sort,  status, description)
+      let sort = `${sortField} ${sortOrder}`;
+      updateDataTable(page, perPage, sort, status, description);
     }
-  }
+  };
 
-  
   useEffect(() => {
     getPenawaranSo(page, perPage, currentSort);
   }, []);
 
   // fungsi dari ambil data
-  const getPenawaranSo = async (page, perPage, currentSort, status = null, keterangan = null) => {
-    
-    let filter = { 
-      
-      page: page, 
+  const getPenawaranSo = async (
+    page,
+    perPage,
+    currentSort,
+    status = null,
+    keterangan = null
+  ) => {
+    let filter = {
+      page: page,
       per_page: perPage,
       status: 2,
-      status_ph : 3,
-      warehouse_id : parseInt(warehouse)
+      status_ph: 3,
+      warehouse_id: parseInt(warehouse),
     };
     if (status !== null) {
-      filter = Object.assign(filter, { status: status })
+      filter = Object.assign(filter, { status: status });
     }
     if (keterangan !== null) {
-        filter = Object.assign(filter, { keterangan: keterangan })
+      filter = Object.assign(filter, { keterangan: keterangan });
     }
     const data = filter;
     const headers = {
@@ -137,148 +143,166 @@ const PenawaranSo = () => {
 
   return (
     <div>
-        <Row>
-          <div className="col">
+      <Row>
+        <div className="col">
           <Card className="bg-secondary shadow">
-              <CardHeader className="bg-white border-0">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <h3>Sales Order</h3>
-                  <div style={{ textAlign: 'right' }}>
-                    <Link className="btn btn-info" to="/admin/sales-order/so-penawaran/create">
+            <CardHeader className="bg-white border-0">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h3>Sales Order</h3>
+                <div style={{ textAlign: "right" }}>
+                  <Link
+                    className="btn btn-info"
+                    to="/admin/sales-order/so-penawaran/create"
+                  >
                     <i className="fas fa-plus" /> Tambah
-                    </Link>
-                  </div>
+                  </Link>
                 </div>
-              </CardHeader>
-              <CardBody>
-                      <Form>
-                        <Row md="12">
-                          <Col md="3">
-                            <FormGroup>
-                              <Label htmlFor="exampleFormControlSelect3">Status</Label>
-                              <Input
-                                className="form-control-alternative"
-                                name="Tipe So"
-                                type="select"
-                                value={status}
-                                onChange={e => updateDataTable(1, perPage, currentSort, e.target.value, description)}
-                              >
-                                <option value="">Pilih Sales Order</option>
-                                <option value="1">Cahsier</option>
-                                <option value="2">Project</option>
-                                <option value="3">E-commerce</option>
-                                <option value="4">Canvaser</option>
-                              </Input>
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                      </Form>
-                    <ToolkitProvider
-                            rowNumber={rowIndex}
-                            data={allPenawaranSo}
-                            keyField="id"
-                            columns={[
-                            {
-                                dataField: "no",
-                                text: "#",
-                                sort: true,
-                                page: 1,
-                                formatter: (cell, row, index) => {
-                                let currentRow = ++index;
-                                return currentRow + rowIndex;
-                                },
-                            },
-                            {
-                              dataField: "created_at",
-                              text: "Tanggal Buat",
-                              sort: true,
-                            },
-                            {
-                                dataField: "so_code",
-                                text: "Kode SO",
-                                sort: true,
-                            },
-                            {
-                                dataField: "customer_name",
-                                text: "Customer",
-                                sort: true,
-                            },
-                            {
-                                dataField: "qty_total",
-                                text: "Jumlah Total",
-                                sort: true,
-                            },
-                            {
-                                dataField: "status_ph",
-                                text: "Status",
-                                sort: true,
-                                formatter: (cell, row) => {
-                                  return row.status_ph === 3
-                                    ? 'proses'
-                                    : row.status_ph === 4
-                                    ? 'Tidak Setuju'
-                                    : 'Setuju';
-                                },
-                            },
-                            {
-                                dataField: "", text: "", formatter: (cell, row, index) => {
-                                return (
-                                  <UncontrolledDropdown nav>
-                                  <DropdownToggle className="nav-link pr-0" color="" tag="a">
-                                      <Link className="btn btn-danger" to="/#">
-                                         Tindakan
-                                      </Link>
-                                  </DropdownToggle>
-                                  <DropdownMenu>
-                                        {/* <Link to={redirectPrefix1 + row.id}
+              </div>
+            </CardHeader>
+            <CardBody>
+              <Form>
+                <Row md="12">
+                  <Col md="3">
+                    <FormGroup>
+                      <Label htmlFor="exampleFormControlSelect3">Status</Label>
+                      <Input
+                        className="form-control-alternative"
+                        name="Tipe So"
+                        type="select"
+                        value={status}
+                        onChange={(e) =>
+                          updateDataTable(
+                            1,
+                            perPage,
+                            currentSort,
+                            e.target.value,
+                            description
+                          )
+                        }
+                      >
+                        <option value="">Pilih Sales Order</option>
+                        <option value="1">Cahsier</option>
+                        <option value="2">Project</option>
+                        <option value="3">E-commerce</option>
+                        <option value="4">Canvaser</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                </Row>
+              </Form>
+              <ToolkitProvider
+                rowNumber={rowIndex}
+                data={allPenawaranSo}
+                keyField="id"
+                columns={[
+                  {
+                    dataField: "no",
+                    text: "#",
+                    sort: true,
+                    page: 1,
+                    formatter: (cell, row, index) => {
+                      let currentRow = ++index;
+                      return currentRow + rowIndex;
+                    },
+                  },
+                  {
+                    dataField: "created_at",
+                    text: "Tanggal Buat",
+                    sort: true,
+                  },
+                  {
+                    dataField: "so_code",
+                    text: "Kode SO",
+                    sort: true,
+                  },
+                  {
+                    dataField: "customer_name",
+                    text: "Customer",
+                    sort: true,
+                  },
+                  {
+                    dataField: "qty_total",
+                    text: "Jumlah Total",
+                    sort: true,
+                  },
+                  {
+                    dataField: "status_ph",
+                    text: "Status",
+                    sort: true,
+                    formatter: (cell, row) => {
+                      return row.status_ph === 3
+                        ? "proses"
+                        : row.status_ph === 4
+                        ? "Tidak Setuju"
+                        : "Setuju";
+                    },
+                  },
+                  {
+                    dataField: "",
+                    text: "",
+                    formatter: (cell, row, index) => {
+                      return (
+                        <UncontrolledDropdown nav>
+                          <DropdownToggle
+                            className="nav-link pr-0"
+                            color=""
+                            tag="a"
+                          >
+                            <Button className="btn btn-danger">Tindakan</Button>
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            {/* <Link to={redirectPrefix1 + row.id}
                                           id={"tooltip_" + row.id}>
                                         <DropdownItem>
                                           <i className="fas fa-print" /><span>Pembayaran</span>
                                         </DropdownItem>
                                         </Link> */}
-                                        {/* {updateButton && updateButton === "YES" && ( */}
-                                        {/* <Link to={redirectPrefix1 + row.id}
+                            {/* {updateButton && updateButton === "YES" && ( */}
+                            {/* <Link to={redirectPrefix1 + row.id}
                                           id={"tooltip_" + row.id}>
                                         <DropdownItem>
                                           <i className="fas fa-book" /><span>Detail</span>
                                         </DropdownItem>
                                         </Link> */}
-                                        {/* )} */}
-                                        {/* {updateButton && updateButton === "YES" && ( */}
-                                        <Link  to={redirectPrefix + row.id}
-                                          id={"tooltip_" + row.id}>
-                                        <DropdownItem>
-                                          <i className="fas fa-user-edit" /><span>Edit</span>
-                                        </DropdownItem>
-                                        </Link>
-                                        {/* )} */}
-                                  </DropdownMenu>
-                              </UncontrolledDropdown>
-                                  )
-                                }
-                              },
-                            ]}
-                        >
-                            {(props) => (
-                            <div className="py-4 table-responsive">
-                                <BootstrapTable
-                                remote
-                                {...props.baseProps}
-                                bootstrap4={true}
-                                bordered={false}
-                                hover={true}
-                                pagination={paginationFactory({ ...paginationOption })}
-                                onTableChange={handleTableChange}
-                                />
-                            </div>
-                          )}
-                    </ToolkitProvider>
-              </CardBody>
-            </Card>
-          </div>
-        </Row>
+                            {/* )} */}
+                            {/* {updateButton && updateButton === "YES" && ( */}
+                            <Link
+                              to={redirectPrefix + row.id}
+                              id={"tooltip_" + row.id}
+                            >
+                              <DropdownItem>
+                                <i className="fas fa-user-edit" />
+                                <span>Edit</span>
+                              </DropdownItem>
+                            </Link>
+                            {/* )} */}
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      );
+                    },
+                  },
+                ]}
+              >
+                {(props) => (
+                  <div className="py-4 table-responsive">
+                    <BootstrapTable
+                      remote
+                      {...props.baseProps}
+                      bootstrap4={true}
+                      bordered={false}
+                      hover={true}
+                      pagination={paginationFactory({ ...paginationOption })}
+                      onTableChange={handleTableChange}
+                    />
+                  </div>
+                )}
+              </ToolkitProvider>
+            </CardBody>
+          </Card>
+        </div>
+      </Row>
     </div>
   );
-}
+};
 
 export default PenawaranSo;

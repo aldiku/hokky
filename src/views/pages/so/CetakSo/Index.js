@@ -1,23 +1,26 @@
 /*eslint-disable*/
-import React, { useEffect, useState } from 'react';
-import { 
-    Card,
-    Button, 
-    Row, 
-    Col, 
-    CardBody, 
-    CardHeader, 
-    ButtonGroup, 
-    Form, 
-    FormGroup, 
-    Label, 
-    Input ,
-    DropdownItem,DropdownMenu, UncontrolledDropdown, DropdownToggle
-} from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  CardBody,
+  CardHeader,
+  ButtonGroup,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  DropdownItem,
+  DropdownMenu,
+  UncontrolledDropdown,
+  DropdownToggle,
+} from "reactstrap";
 
 import { Link } from "react-router-dom";
-import axios from 'axios';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import axios from "axios";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
@@ -34,7 +37,7 @@ const CetakSo = () => {
   const [perPage, setPerpage] = useState(10);
   const [totalItem, setTotalItem] = useState(0);
   const [currentSort, setCurrentSort] = useState("");
-  
+
   let paginationOption = {
     page: page,
     alwaysShowAllBtns: true,
@@ -56,7 +59,7 @@ const CetakSo = () => {
               aria-controls="datatable-basic"
               className="form-control form-control-sm"
               onChange={(e) => {
-                updateDataTable(page, e.target.value, currentSort)
+                updateDataTable(page, e.target.value, currentSort);
               }}
             >
               <option value="10">10</option>
@@ -69,7 +72,7 @@ const CetakSo = () => {
         </label>
       </div>
     ),
-  }
+  };
 
   const updateDataTable = (page, perPage, sort, order_code, description) => {
     getSo(page, perPage, sort, order_code, description);
@@ -79,30 +82,27 @@ const CetakSo = () => {
     setCurrentSort(sort);
     setOrderCode(order_code);
     setDescription(description);
-  }
+  };
 
   const handleTableChange = (type, { sortField, sortOrder }) => {
     if (type === "sort") {
-      let sort = `${sortField} ${sortOrder}`
-      updateDataTable(page, perPage, sort,  order_code, description)
+      let sort = `${sortField} ${sortOrder}`;
+      updateDataTable(page, perPage, sort, order_code, description);
     }
-  }
+  };
 
-  
   useEffect(() => {
     getSo(page, perPage, currentSort);
   }, []);
 
   // fungsi dari ambil data
   const getSo = (page, perPage, currentSort) => {
-    
-    let filter = { 
-        page: page, 
-        per_page: perPage, 
-        status: 2,
-        status_ph: 5 ,
-        warehouse_id : parseInt(warehouse),
-    
+    let filter = {
+      page: page,
+      per_page: perPage,
+      status: 2,
+      status_ph: 5,
+      warehouse_id: parseInt(warehouse),
     };
     const data = filter;
     const headers = {
@@ -128,127 +128,151 @@ const CetakSo = () => {
     setOrderCode("");
     setDescription("");
     updateDataTable(1, perPage, currentSort, "", "");
-  }
+  };
 
   return (
     <div>
-        <Row>
-          <div className="col">
-            <Card className="bg-secondary shadow">
-              <CardHeader className="bg-white border-0">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <h3>Cetak</h3>
-                </div>
-              </CardHeader>
-              <CardBody>
-                  <Form>
-                        <Row md="12">
-                          <Col md="3">
-                            <FormGroup>
-                              <Label htmlFor="exampleFormControlSelect3">Kode SO</Label>
-                              <Input
-                              className="form-control-alternative"
-                                type="text"
-                                placeholder="Masukan Kode So"
-                                value={order_code}
-                                onChange={e => updateDataTable(1, perPage, currentSort, e.target.value, description)}
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md="3">
-                            <FormGroup>
-                              <Label htmlFor="exampleFormControlSelect3">Deskripsi</Label>
-                              <Input
-                              className="form-control-alternative"
-                                type="text"
-                                placeholder="Masukan Deskripsi"
-                                value={description}
-                                onChange={e => updateDataTable(1, perPage, currentSort, order_code, e.target.value)}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <Button type="button" onClick={reset} color="secondary">Reset</Button>
-                          </Col>
-                        </Row>
-                      </Form>
-                    
-                    <ToolkitProvider
-                            rowNumber={rowIndex}
-                            data={allSo}
-                            keyField="id"
-                            columns={[
-                            {
-                                dataField: "no",
-                                text: "#",
-                                sort: true,
-                                page: 1,
-                                formatter: (cell, row, index) => {
-                                let currentRow = ++index;
-                                return currentRow + rowIndex;
-                                },
-                            },
-                            {
-                              dataField: "created_at",
-                              text: "Tanggal Buat",
-                              sort: true,
-                            },
-                            {
-                                dataField: "so_code",
-                                text: "Kode SO",
-                                sort: true,
-                            },
-                            {
-                                dataField: "customer_name",
-                                text: "Customer",
-                                sort: true,
-                            },
-                            {
-                                dataField: "qty_total",
-                                text: "Jumlah Total",
-                                sort: true,
-                            },
-                            {
-                                dataField: "keterangan",
-                                text: "Keterangan",
-                                sort: true,
-                            },
-                            {
-                                dataField: "status_ph",
-                                text: "Status",
-                                sort: true,
-                                formatter: (cell, row) => {
-                                  return row.status_ph === 3
-                                    ? 'proses'
-                                    : row.status_ph === 4
-                                    ? 'Tidak Setuju'
-                                    : 'Setuju';
-                                },
-                            },
-                            {
-                                dataField: "", text: "", formatter: (cell, row, index) => {
-                                return (
-                                    // <ButtonGroup>
-                                    //     <Button>
-                                    //         <Link
-                                    //         to={redirectPrefix + row.id}
-                                    //         id={"tooltip_" + row.id}
-                                    //         target="_blank"
-                                    //         >
-                                    //         <i className="fas fa-print" /> Cetak
-                                    //         </Link>
-                                    //     </Button>
-                                    // </ButtonGroup>
-                                    <UncontrolledDropdown nav>
-                                      <DropdownToggle className="nav-link pr-0" color="" tag="a">
-                                          <Link className="btn btn-danger" to="/#">
-                                             Tindakan
-                                          </Link>
-                                      </DropdownToggle>
-                                      <DropdownMenu>
-                                            {/* <Link to={redirectPrefix1 + row.id}
+      <Row>
+        <div className="col">
+          <Card className="bg-secondary shadow">
+            <CardHeader className="bg-white border-0">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h3>Cetak</h3>
+              </div>
+            </CardHeader>
+            <CardBody>
+              <Form>
+                <Row md="12">
+                  <Col md="3">
+                    <FormGroup>
+                      <Label htmlFor="exampleFormControlSelect3">Kode SO</Label>
+                      <Input
+                        className="form-control-alternative"
+                        type="text"
+                        placeholder="Masukan Kode So"
+                        value={order_code}
+                        onChange={(e) =>
+                          updateDataTable(
+                            1,
+                            perPage,
+                            currentSort,
+                            e.target.value,
+                            description
+                          )
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md="3">
+                    <FormGroup>
+                      <Label htmlFor="exampleFormControlSelect3">
+                        Deskripsi
+                      </Label>
+                      <Input
+                        className="form-control-alternative"
+                        type="text"
+                        placeholder="Masukan Deskripsi"
+                        value={description}
+                        onChange={(e) =>
+                          updateDataTable(
+                            1,
+                            perPage,
+                            currentSort,
+                            order_code,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Button type="button" onClick={reset} color="secondary">
+                      Reset
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+
+              <ToolkitProvider
+                rowNumber={rowIndex}
+                data={allSo}
+                keyField="id"
+                columns={[
+                  {
+                    dataField: "no",
+                    text: "#",
+                    sort: true,
+                    page: 1,
+                    formatter: (cell, row, index) => {
+                      let currentRow = ++index;
+                      return currentRow + rowIndex;
+                    },
+                  },
+                  {
+                    dataField: "created_at",
+                    text: "Tanggal Buat",
+                    sort: true,
+                  },
+                  {
+                    dataField: "so_code",
+                    text: "Kode SO",
+                    sort: true,
+                  },
+                  {
+                    dataField: "customer_name",
+                    text: "Customer",
+                    sort: true,
+                  },
+                  {
+                    dataField: "qty_total",
+                    text: "Jumlah Total",
+                    sort: true,
+                  },
+                  {
+                    dataField: "keterangan",
+                    text: "Keterangan",
+                    sort: true,
+                  },
+                  {
+                    dataField: "status_ph",
+                    text: "Status",
+                    sort: true,
+                    formatter: (cell, row) => {
+                      return row.status_ph === 3
+                        ? "proses"
+                        : row.status_ph === 4
+                        ? "Tidak Setuju"
+                        : "Setuju";
+                    },
+                  },
+                  {
+                    dataField: "",
+                    text: "",
+                    formatter: (cell, row, index) => {
+                      return (
+                        // <ButtonGroup>
+                        //     <Button>
+                        //         <Link
+                        //         to={redirectPrefix + row.id}
+                        //         id={"tooltip_" + row.id}
+                        //         target="_blank"
+                        //         >
+                        //         <i className="fas fa-print" /> Cetak
+                        //         </Link>
+                        //     </Button>
+                        // </ButtonGroup>
+                        <UncontrolledDropdown nav>
+                          <DropdownToggle
+                            className="nav-link pr-0"
+                            color=""
+                            tag="a"
+                          >
+                            <Button className="btn btn-danger">Tindakan</Button>
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            {/* <Link to={redirectPrefix1 + row.id}
                                               id={"tooltip_" + row.id}>
                                             <DropdownItem>
                                               <i className="fas fa-book" /><span>Cek Jurnal</span>
@@ -260,41 +284,43 @@ const CetakSo = () => {
                                               <i className="fas fa-book" /><span>Detail</span>
                                             </DropdownItem>
                                             </Link> */}
-                                            <Link  to={redirectPrefix + row.id}
-                                              id={"tooltip_" + row.id}
-                                              target="_blank">
-                                            <DropdownItem>
-                                              <i className="fas fa-print" /><span>Cetak</span>
-                                            </DropdownItem>
-                                            </Link>
-                                      </DropdownMenu>
-                                  </UncontrolledDropdown>
-                                )
-                                } 
-                            },
-                            ]}
-                        >
-                            {(props) => (
-                            <div className="py-4 table-responsive">
-                                <BootstrapTable
-                                remote
-                                {...props.baseProps}
-                                bootstrap4={true}
-                                bordered={false}
-                                hover={true}
-                                pagination={paginationFactory({ ...paginationOption })}
-                                onTableChange={handleTableChange}
-                                />
-                            </div>
-                            )}
-                    </ToolkitProvider>
-              </CardBody>
-            </Card>
-          </div>
-        </Row>
-      
+                            <Link
+                              to={redirectPrefix + row.id}
+                              id={"tooltip_" + row.id}
+                              target="_blank"
+                            >
+                              <DropdownItem>
+                                <i className="fas fa-print" />
+                                <span>Cetak</span>
+                              </DropdownItem>
+                            </Link>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      );
+                    },
+                  },
+                ]}
+              >
+                {(props) => (
+                  <div className="py-4 table-responsive">
+                    <BootstrapTable
+                      remote
+                      {...props.baseProps}
+                      bootstrap4={true}
+                      bordered={false}
+                      hover={true}
+                      pagination={paginationFactory({ ...paginationOption })}
+                      onTableChange={handleTableChange}
+                    />
+                  </div>
+                )}
+              </ToolkitProvider>
+            </CardBody>
+          </Card>
+        </div>
+      </Row>
     </div>
   );
-}
+};
 
 export default CetakSo;

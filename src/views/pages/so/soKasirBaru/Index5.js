@@ -1239,7 +1239,7 @@ const handleSubmit1 = async (e) => {
 			</Container>
 			{/* Customer */}
             
-            <Modal toggle={() => setIsOpenCustomer(!isOpenCustomer)} isOpen={isOpenCustomer} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+            <Modal toggle={() => setIsOpenCustomer(!isOpenCustomer)} isOpen={isOpenCustomer} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsOpenCustomer(!isOpenCustomer)}>Daftar Customer</ModalHeader>
                 <Form onSubmit={handleSubmit1}>
                     <ModalBody
@@ -1391,7 +1391,7 @@ const handleSubmit1 = async (e) => {
             
 			
             {/* modal pembayaran */}
-			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsOpen(!isOpen)}>Metode Pembayaran</ModalHeader>
 				<ModalBody
 					cssModule={{

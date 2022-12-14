@@ -955,7 +955,7 @@ export default function CreateSalesOrder() {
 				</Row>
 			</Container>
 			{/* modal pembayaran */}
-			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsOpen(!isOpen)}>Metode Pembayaran</ModalHeader>
 				<ModalBody
 					cssModule={{

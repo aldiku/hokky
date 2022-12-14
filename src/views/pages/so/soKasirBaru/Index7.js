@@ -874,7 +874,7 @@ export default function CreateSalesOrder() {
 				</Row>
 			</Container>
 			{/* modal pembayaran */}
-			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsOpen(!isOpen)}>Metode Pembayaran</ModalHeader>
 				<ModalBody
 					cssModule={{
@@ -1075,7 +1075,7 @@ export default function CreateSalesOrder() {
 			</Modal>
 
 			{/* modal konfirmasi editable */}
-			<Modal isOpen={isConfEditableOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal isOpen={isConfEditableOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsConfEditableOpen(!isConfEditableOpen)}>Konfirmasi Izinkan Edit</ModalHeader>
 				<ModalBody
 					cssModule={{
@@ -1098,7 +1098,7 @@ export default function CreateSalesOrder() {
 			</Modal>
 
 			{/* modal kembalian */}
-			<Modal isOpen={isKembalianOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal isOpen={isKembalianOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsKembalianOpen(!isKembalianOpen)}>Kembalian</ModalHeader>
 				<ModalBody
 					cssModule={{

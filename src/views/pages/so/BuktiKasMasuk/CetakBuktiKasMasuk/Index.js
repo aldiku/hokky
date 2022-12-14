@@ -1,22 +1,25 @@
 /*eslint-disable*/
-import React, { useEffect, useState } from 'react';
-import { 
-    Card, 
-    Button, 
-    Row, 
-    Col, 
-    CardBody, 
-    CardHeader, 
-    ButtonGroup, 
-    Form, 
-    FormGroup, 
-    Label, 
-    Input ,
-    DropdownItem,DropdownMenu, UncontrolledDropdown, DropdownToggle
-} from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  CardBody,
+  CardHeader,
+  ButtonGroup,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  DropdownItem,
+  DropdownMenu,
+  UncontrolledDropdown,
+  DropdownToggle,
+} from "reactstrap";
 import { Link } from "react-router-dom";
-import axios from 'axios';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import axios from "axios";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
@@ -33,7 +36,7 @@ const CetakBuktiKasMasuk = () => {
   const [perPage, setPerpage] = useState(10);
   const [totalItem, setTotalItem] = useState(0);
   const [currentSort, setCurrentSort] = useState("");
-  
+
   let paginationOption = {
     page: page,
     alwaysShowAllBtns: true,
@@ -55,7 +58,7 @@ const CetakBuktiKasMasuk = () => {
               aria-controls="datatable-basic"
               className="form-control form-control-sm"
               onChange={(e) => {
-                updateDataTable(page, e.target.value, currentSort)
+                updateDataTable(page, e.target.value, currentSort);
               }}
             >
               <option value="10">10</option>
@@ -68,7 +71,7 @@ const CetakBuktiKasMasuk = () => {
         </label>
       </div>
     ),
-  }
+  };
 
   const updateDataTable = (page, perPage, sort, uomCode, description) => {
     getBuktiKasMasuk(page, perPage, sort, uomCode, description);
@@ -78,30 +81,27 @@ const CetakBuktiKasMasuk = () => {
     setCurrentSort(sort);
     setUomCode(uomCode);
     setDescription(description);
-  }
+  };
 
   const handleTableChange = (type, { sortField, sortOrder }) => {
     if (type === "sort") {
-      let sort = `${sortField} ${sortOrder}`
-      updateDataTable(page, perPage, sort,  uomCode, description)
+      let sort = `${sortField} ${sortOrder}`;
+      updateDataTable(page, perPage, sort, uomCode, description);
     }
-  }
+  };
 
-  
   useEffect(() => {
     getBuktiKasMasuk(page, perPage, currentSort);
   }, []);
 
   // fungsi dari ambil data
   const getBuktiKasMasuk = (page, perPage, currentSort) => {
-    
-    let filter = { 
-      page: page, 
-      per_page: perPage, 
+    let filter = {
+      page: page,
+      per_page: perPage,
       status_af: 5,
-      status_d : 5,
-      warehouse_id : parseInt(warehouse)
-      
+      status_d: 5,
+      warehouse_id: parseInt(warehouse),
     };
     const data = filter;
     const headers = {
@@ -127,185 +127,219 @@ const CetakBuktiKasMasuk = () => {
     setUomCode("");
     setDescription("");
     updateDataTable(1, perPage, currentSort, "", "");
-  }
+  };
 
   const formatRupiah = (money) => {
-    return new Intl.NumberFormat('id-ID',
-        { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }
-    ).format(money);
-  }
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(money);
+  };
 
   return (
-    <div>  
-        <Row>
-          <div className="col">
+    <div>
+      <Row>
+        <div className="col">
           <Card className="bg-secondary shadow">
-              <CardHeader className="bg-white border-0">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <h3>Cetak</h3>
-                </div>
-              </CardHeader>
-              <CardBody>
-                      <Form>
-                        <Row md="12">
-                          <Col md="3">
-                            <FormGroup>
-                              <Label htmlFor="exampleFormControlSelect3">Kode BKM</Label>
-                              <Input
-                              className="form-control-alternative"
-                                type="text"
-                                placeholder="Masukan Kode Uom"
-                                value={uomCode}
-                                onChange={e => updateDataTable(1, perPage, currentSort, e.target.value, description)}
-                              />
-                            </FormGroup>
-                          </Col>
-                          <Col md="3">
-                            <FormGroup>
-                              <Label htmlFor="exampleFormControlSelect3">Keterangan</Label>
-                              <Input
-                              className="form-control-alternative"
-                                type="text"
-                                placeholder="Masukan Deskripsi"
-                                value={description}
-                                onChange={e => updateDataTable(1, perPage, currentSort, uomCode, e.target.value)}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <Button type="button" onClick={reset} color="secondary">Reset</Button>
-                          </Col>
-                        </Row>
-                      </Form>
-                    <ToolkitProvider
-                            rowNumber={rowIndex}
-                            data={allBuktiKasMasuk}
-                            keyField="id"
-                            columns={[
-                            {
-                                dataField: "no",
-                                text: "#",
-                                sort: true,
-                                page: 1,
-                                formatter: (cell, row, index) => {
-                                let currentRow = ++index;
-                                return currentRow + rowIndex;
-                                },
-                            },
-                            {
-                                dataField: "bkm_code",
-                                text: "Kode BKM",
-                                sort: true,
-                            },
-                            {
-                                dataField: "code_invoice",
-                                text: "Kode Invoice",
-                                sort: true,
-                            },
-                            {
-                                dataField: "customer_name",
-                                text: "Customer",
-                                sort: true,
-                            },
-                            {
-                                dataField: "pembayaran_total",
-                                text: "Pembayaran Total",
-                                sort: true,
-                                formatter: (value) => formatRupiah(value)
-                            },
-                            {
-                                dataField: "status_af",
-                                text: "Status Admin Finance",
-                                sort: true,
-                                formatter: (cell, row) => {
-                                  return row.status_af === 3
-                                    ? 'proses'
-                                    : row.status_af === 4
-                                    ? 'Tidak Setuju'
-                                    : 'Setuju';
-                                },
-                            },
-                            {
-                                dataField: "status_d",
-                                text: "Status Pimpinan",
-                                sort: true,
-                                formatter: (cell, row) => {
-                                  return row.status_d === 3
-                                    ? 'proses'
-                                    : row.status_d === 4
-                                    ? 'Tidak Setuju'
-                                    : 'Setuju';
-                                },
-                            },
-                            {
-                                dataField: "", text: "", formatter: (cell, row, index) => {
-                                return (
-                                    // <ButtonGroup>
-                                    // <Button>
-                                    //     <Link
-                                    //     to={redirectPrefix + row.id}
-                                    //     id={"tooltip_" + row.id}
-                                    //     target="_blank"
-                                    //     >
-                                    //     <i className="fas fa-print" /> Cetak
-                                    //     </Link>
-                                    // </Button>
-                                    // </ButtonGroup>
-                                    <UncontrolledDropdown nav>
-                                      <DropdownToggle className="nav-link pr-0" color="" tag="a">
-                                          <Link className="btn btn-danger" to="/#">
-                                             Tindakan
-                                          </Link>
-                                      </DropdownToggle>
-                                      <DropdownMenu>
-                                          {/* <Link to={redirectPrefix1 + row.id}
+            <CardHeader className="bg-white border-0">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h3>Cetak</h3>
+              </div>
+            </CardHeader>
+            <CardBody>
+              <Form>
+                <Row md="12">
+                  <Col md="3">
+                    <FormGroup>
+                      <Label htmlFor="exampleFormControlSelect3">
+                        Kode BKM
+                      </Label>
+                      <Input
+                        className="form-control-alternative"
+                        type="text"
+                        placeholder="Masukan Kode Uom"
+                        value={uomCode}
+                        onChange={(e) =>
+                          updateDataTable(
+                            1,
+                            perPage,
+                            currentSort,
+                            e.target.value,
+                            description
+                          )
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                  <Col md="3">
+                    <FormGroup>
+                      <Label htmlFor="exampleFormControlSelect3">
+                        Keterangan
+                      </Label>
+                      <Input
+                        className="form-control-alternative"
+                        type="text"
+                        placeholder="Masukan Deskripsi"
+                        value={description}
+                        onChange={(e) =>
+                          updateDataTable(
+                            1,
+                            perPage,
+                            currentSort,
+                            uomCode,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Button type="button" onClick={reset} color="secondary">
+                      Reset
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+              <ToolkitProvider
+                rowNumber={rowIndex}
+                data={allBuktiKasMasuk}
+                keyField="id"
+                columns={[
+                  {
+                    dataField: "no",
+                    text: "#",
+                    sort: true,
+                    page: 1,
+                    formatter: (cell, row, index) => {
+                      let currentRow = ++index;
+                      return currentRow + rowIndex;
+                    },
+                  },
+                  {
+                    dataField: "bkm_code",
+                    text: "Kode BKM",
+                    sort: true,
+                  },
+                  {
+                    dataField: "code_invoice",
+                    text: "Kode Invoice",
+                    sort: true,
+                  },
+                  {
+                    dataField: "customer_name",
+                    text: "Customer",
+                    sort: true,
+                  },
+                  {
+                    dataField: "pembayaran_total",
+                    text: "Pembayaran Total",
+                    sort: true,
+                    formatter: (value) => formatRupiah(value),
+                  },
+                  {
+                    dataField: "status_af",
+                    text: "Status Admin Finance",
+                    sort: true,
+                    formatter: (cell, row) => {
+                      return row.status_af === 3
+                        ? "proses"
+                        : row.status_af === 4
+                        ? "Tidak Setuju"
+                        : "Setuju";
+                    },
+                  },
+                  {
+                    dataField: "status_d",
+                    text: "Status Pimpinan",
+                    sort: true,
+                    formatter: (cell, row) => {
+                      return row.status_d === 3
+                        ? "proses"
+                        : row.status_d === 4
+                        ? "Tidak Setuju"
+                        : "Setuju";
+                    },
+                  },
+                  {
+                    dataField: "",
+                    text: "",
+                    formatter: (cell, row, index) => {
+                      return (
+                        // <ButtonGroup>
+                        // <Button>
+                        //     <Link
+                        //     to={redirectPrefix + row.id}
+                        //     id={"tooltip_" + row.id}
+                        //     target="_blank"
+                        //     >
+                        //     <i className="fas fa-print" /> Cetak
+                        //     </Link>
+                        // </Button>
+                        // </ButtonGroup>
+                        <UncontrolledDropdown nav>
+                          <DropdownToggle
+                            className="nav-link pr-0"
+                            color=""
+                            tag="a"
+                          >
+                            <Button className="btn btn-danger">Tindakan</Button>
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            {/* <Link to={redirectPrefix1 + row.id}
                                               id={"tooltip_" + row.id}>
                                             <DropdownItem>
                                               <i className="fas fa-book" /><span>Cek Jurnal</span>
                                             </DropdownItem>
                                             </Link> */}
-                                            <Link to={redirectPrefix1 + row.id}
-                                              id={"tooltip_" + row.id}>
-                                            <DropdownItem>
-                                              <i className="fas fa-book" /><span>Detail</span>
-                                            </DropdownItem>
-                                            </Link>
-                                            <Link  to={redirectPrefix + row.id}
-                                              id={"tooltip_" + row.id}
-                                              target="_blank">
-                                            <DropdownItem>
-                                              <i className="fas fa-print" /><span>Cetak</span>
-                                            </DropdownItem>
-                                            </Link>
-                                      </DropdownMenu>
-                                    </UncontrolledDropdown>
-                                  )
-                                }
-                            },
-                            ]}
-                        >
-                            {(props) => (
-                            <div className="py-4 table-responsive">
-                                <BootstrapTable
-                                remote
-                                {...props.baseProps}
-                                bootstrap4={true}
-                                bordered={false}
-                                hover={true}
-                                pagination={paginationFactory({ ...paginationOption })}
-                                onTableChange={handleTableChange}
-                                />
-                            </div>
-                            )}
-                    </ToolkitProvider>
-              </CardBody>
-            </Card>
-          </div>
-        </Row>
+                            <Link
+                              to={redirectPrefix1 + row.id}
+                              id={"tooltip_" + row.id}
+                            >
+                              <DropdownItem>
+                                <i className="fas fa-book" />
+                                <span>Detail</span>
+                              </DropdownItem>
+                            </Link>
+                            <Link
+                              to={redirectPrefix + row.id}
+                              id={"tooltip_" + row.id}
+                              target="_blank"
+                            >
+                              <DropdownItem>
+                                <i className="fas fa-print" />
+                                <span>Cetak</span>
+                              </DropdownItem>
+                            </Link>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      );
+                    },
+                  },
+                ]}
+              >
+                {(props) => (
+                  <div className="py-4 table-responsive">
+                    <BootstrapTable
+                      remote
+                      {...props.baseProps}
+                      bootstrap4={true}
+                      bordered={false}
+                      hover={true}
+                      pagination={paginationFactory({ ...paginationOption })}
+                      onTableChange={handleTableChange}
+                    />
+                  </div>
+                )}
+              </ToolkitProvider>
+            </CardBody>
+          </Card>
+        </div>
+      </Row>
     </div>
   );
-}
+};
 
 export default CetakBuktiKasMasuk;

@@ -30,7 +30,6 @@ import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 import Detail from "views/pages/itemStock/StockPribadi/Detail"
-import StokLokasi from "./SemuaStok";
 
 
 const StockPribadi = () => {
@@ -50,9 +49,7 @@ const StockPribadi = () => {
   const [detailItemStok, setDetailItemStok] = useState(0);
   const [namaproyek,setNamaProyek] = useState("");
   const [image1,setImage1] = useState("");
-  // const redirectPrefix = `/admin/warehouse/edit/`;
-  const redirectPrefix1 = `/admin/stock-item/kartu-stok/`;
-  const redirectPrefix = `/admin/stock-item/semua-cabang/`;
+
   const [itemId, setItemId] = useState(1);
   const toggle1 = () => setModal1(!modal1);
   const [modal1, setModal1] = useState(false);
@@ -295,7 +292,7 @@ const StockPribadi = () => {
                           </Col>
                           <Col md="3">
                             <FormGroup>
-                            <TextField className="col"
+                            <TextField className="col text-muted"
 															label="Kode Item" variant="outlined" size="small" 
 															value={codeStock}
 															onChange={e => updateDataTable(1, perPage, currentSort, nameStock,e.target.value,barcode)}/>
@@ -429,7 +426,7 @@ const StockPribadi = () => {
           </div>
         </Row>
    
-      <Modal isOpen={modal1} toggle={toggle1} style={{ minWidth: "70%", top: "-20%" }}>
+      <Modal isOpen={modal1} toggle={toggle1} style={{ minWidth: "70%"}}>
         <ModalHeader toggle={toggle1} className="text-center" align="center">{namaitem}</ModalHeader>
         <ModalBody align="center">
           <Row md="12">
@@ -533,7 +530,7 @@ const StockPribadi = () => {
           </Button>
         </ModalBody>
       </Modal>  
-      <Modal isOpen={modal2} toggle={toggle2} style={{ minWidth: "70%", top: "-20%" }}>
+      <Modal isOpen={modal2} toggle={toggle2} style={{ minWidth: "70%"}}>
         <ModalHeader toggle={toggle2} className="text-center" align="center">{namaitem}</ModalHeader>
         <ModalBody align="center">
         <ToolkitProvider

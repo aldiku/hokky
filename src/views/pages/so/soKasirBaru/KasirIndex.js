@@ -776,7 +776,7 @@ export default function KasirIndex() {
 				</Row>
 			</Container>
 			{/* modal pembayaran */}
-			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsOpen(!isOpen)}>Metode Pembayaran</ModalHeader>
 				<ModalBody
 					cssModule={{
@@ -1001,7 +1001,7 @@ export default function KasirIndex() {
 				</ModalFooter>
 			</Modal>
             {/* modal konfirmasi editable */}
-			<Modal isOpen={isConfEditableOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal isOpen={isConfEditableOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsConfEditableOpen(!isConfEditableOpen)}>Konfirmasi Izinkan Edit</ModalHeader>
 				<ModalBody
 					cssModule={{

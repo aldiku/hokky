@@ -38,7 +38,7 @@ export default function ModalPembayaran({ total }) {
         toggle={() => setIsOpen(!isOpen)}
         isOpen={isOpen}
         fade={false}
-        style={{ minWidth: "70%", top: "-20%" }}
+        style={{ minWidth: "70%"}}
       >
         <ModalHeader toggle={() => setIsOpen(!isOpen)}>
           Metode Pembayaran

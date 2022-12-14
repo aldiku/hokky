@@ -1,31 +1,35 @@
 /*eslint-disable*/
-import React, { useEffect, useState } from 'react';
-import { 
-    Card, 
-    Button, 
-    Row, 
-    Col, 
-    CardBody, 
-    CardHeader, 
-    Container,
-    ButtonGroup, 
-    Form, 
-    FormGroup, 
-    Label, 
-    Input, 
-    ButtonDropdown, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem
-} from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  CardBody,
+  CardHeader,
+  Container,
+  ButtonGroup,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+  ButtonDropdown,
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+} from "reactstrap";
 import { Link } from "react-router-dom";
-import axios from 'axios';
+import axios from "axios";
 import SimpleHeader from "components/Headers/SimpleHeader.js";
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
 
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 
-import {PDFDownloadLink} from '@react-pdf/renderer';
+import { PDFDownloadLink } from "@react-pdf/renderer";
 // import PdfReportSo from './Pdf';
 
 const ValidasiCetakRetur = () => {
@@ -43,9 +47,9 @@ const ValidasiCetakRetur = () => {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [statusph, setStatusph] = useState("");
-  const [status,setStatus] = useState("");
+  const [status, setStatus] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  
+
   let paginationOption = {
     page: page,
     alwaysShowAllBtns: true,
@@ -67,7 +71,7 @@ const ValidasiCetakRetur = () => {
               aria-controls="datatable-basic"
               className="form-control form-control-sm"
               onChange={(e) => {
-                updateDataTable(page, e.target.value, currentSort)
+                updateDataTable(page, e.target.value, currentSort);
               }}
             >
               <option value="10">10</option>
@@ -80,41 +84,39 @@ const ValidasiCetakRetur = () => {
         </label>
       </div>
     ),
-  }
+  };
 
-  const updateDataTable = (page, perPage, sort,status) => {
+  const updateDataTable = (page, perPage, sort, status) => {
     setPage(page);
     setPerpage(perPage);
     setRowIndex((page - 1) * perPage);
     setCurrentSort(sort);
     setStatus(status);
     getPenawaranSo(page, perPage, sort, status);
-  }
+  };
 
   const handleTableChange = (type, { sortField, sortOrder }) => {
     if (type === "sort") {
-      let sort = `${sortField} ${sortOrder}`
-      updateDataTable(page, perPage, sort, status)
+      let sort = `${sortField} ${sortOrder}`;
+      updateDataTable(page, perPage, sort, status);
     }
-  }
+  };
 
-  
   useEffect(() => {
     getPenawaranSo(page, perPage, currentSort);
   }, []);
 
   // fungsi dari ambil data
-  const getPenawaranSo = async (page, perPage, currentSort, status='') => {
-    
-    let filter = { 
-      page: page, 
+  const getPenawaranSo = async (page, perPage, currentSort, status = "") => {
+    let filter = {
+      page: page,
       per_page: perPage,
-      status_ar2:5,
-      status_d:5,
-      warehouse_id : parseInt(warehouse)
+      status_ar2: 5,
+      status_d: 5,
+      warehouse_id: parseInt(warehouse),
     };
-    if (status !== '') {
-      filter = Object.assign(filter, { status: status })
+    if (status !== "") {
+      filter = Object.assign(filter, { status: status });
     }
     const data = filter;
     const headers = {
@@ -136,24 +138,23 @@ const ValidasiCetakRetur = () => {
       });
   };
 
-
-  const downloadExcel1 = async ()=> {
-    var fileName = 'Laporan-So'
+  const downloadExcel1 = async () => {
+    var fileName = "Laporan-So";
     // get data all by filter
-    var filter = { 
-      page: page, 
+    var filter = {
+      page: page,
       status: 2,
       per_page: 100000,
-      warehouse_id : parseInt(warehouse)
+      warehouse_id: parseInt(warehouse),
     };
-    if (start !== '') {
-      filter = Object.assign(filter, { start_date: start })
+    if (start !== "") {
+      filter = Object.assign(filter, { start_date: start });
     }
-    if (end !== '') {
-      filter = Object.assign(filter, { end_date: end })
+    if (end !== "") {
+      filter = Object.assign(filter, { end_date: end });
     }
-    if (statusph !== '') {
-      filter = Object.assign(filter, { status_ph: statusph })
+    if (statusph !== "") {
+      filter = Object.assign(filter, { status_ph: statusph });
     }
     const headers = {
       "Content-Type": "application/json",
@@ -164,23 +165,23 @@ const ValidasiCetakRetur = () => {
         headers,
       })
       .then((res) => {
-        var apiData = res.data.response.map((i)=>{
+        var apiData = res.data.response.map((i) => {
           return {
             // 'So Code' : i.no,
-            'Tanggal Buat' : i.created_at ,
-            'Cabang' : i.warehouse_id ,
+            "Tanggal Buat": i.created_at,
+            Cabang: i.warehouse_id,
             // 'Tipe Penjualan' : i. ,
-            'No SO' : i.so_code ,
-            'Sales' : i.sales ,
-            'Customer' : i.customer_id ,
-            'Alamat' : i.manual_address ,
+            "No SO": i.so_code,
+            Sales: i.sales,
+            Customer: i.customer_id,
+            Alamat: i.manual_address,
             // 'Jenis Pembayaran' : i. ,
-            'Total QTY' : i.qty_total ,
-            'Total Harga' : i.price_total ,
-            'PPN' : i.persen_pajak ,
-            'Total Diskon' : i.diskon_total ,
-            'Total Promo' : i.promo_total,
-            'Total Pembayaran' : i.payment_total,
+            "Total QTY": i.qty_total,
+            "Total Harga": i.price_total,
+            PPN: i.persen_pajak,
+            "Total Diskon": i.diskon_total,
+            "Total Promo": i.promo_total,
+            "Total Pembayaran": i.payment_total,
             // 'No' : i. ,
             // 'Item' : i. ,
             // 'Kode' : i. ,
@@ -199,10 +200,11 @@ const ValidasiCetakRetur = () => {
             // 'Harga ongkir' : i.ongkir,
             // 'Harga Payment' : i.payment_total,
             // 'Keterangan' : i.keterangan,
-          }
+          };
         });
         const ws = XLSX.utils.json_to_sheet(apiData);
-        const fileType ="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+        const fileType =
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
         const fileExtension = ".xlsx";
         const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
         const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
@@ -212,31 +214,31 @@ const ValidasiCetakRetur = () => {
       .catch(function (error) {
         console.log(error);
       });
-  }
+  };
 
-  const downloadExcel = async ()=> {
-    var fileName = 'Data-order';
-    const fs = require('fs');
+  const downloadExcel = async () => {
+    var fileName = "Data-order";
+    const fs = require("fs");
     // get data all by filter
-    var filter = { 
-      page: page, 
+    var filter = {
+      page: page,
       per_page: 1000,
-      warehouse_id : parseInt(warehouse)
+      warehouse_id: parseInt(warehouse),
     };
     if (status !== null) {
-      filter = Object.assign(filter, { status: status })
+      filter = Object.assign(filter, { status: status });
     }
     if (description !== null) {
-        filter = Object.assign(filter, { keterangan: description })
+      filter = Object.assign(filter, { keterangan: description });
     }
-    if (start !== '') {
-      filter = Object.assign(filter, { start_date: start })
+    if (start !== "") {
+      filter = Object.assign(filter, { start_date: start });
     }
-    if (end !== '') {
-      filter = Object.assign(filter, { end_date: end })
+    if (end !== "") {
+      filter = Object.assign(filter, { end_date: end });
     }
-    if (statusph !== '') {
-      filter = Object.assign(filter, { statusph: statusph })
+    if (statusph !== "") {
+      filter = Object.assign(filter, { statusph: statusph });
     }
     const headers = {
       "Content-Type": "application/json",
@@ -248,23 +250,25 @@ const ValidasiCetakRetur = () => {
       })
       .then((res) => {
         var apiData = res.data.response;
-        var tableToExcel = (function() {
-          var uri = 'data:application/vnd.ms-excel;base64,',
-            template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>',
-            base64 = function(s) {
-              return window.btoa(unescape(encodeURIComponent(s)))
+        var tableToExcel = (function () {
+          var uri = "data:application/vnd.ms-excel;base64,",
+            template =
+              '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--><meta http-equiv="content-type" content="text/plain; charset=UTF-8"/></head><body><table>{table}</table></body></html>',
+            base64 = function (s) {
+              return window.btoa(unescape(encodeURIComponent(s)));
             },
-            format = function(s, c) {
-              return s.replace(/{(\w+)}/g, function(m, p) {
+            format = function (s, c) {
+              return s.replace(/{(\w+)}/g, function (m, p) {
                 return c[p];
-              })
-            }
-          return function(table, name) {
-            var heading = 'Laporan Sales Order';
-            var imgsrc1 = 'https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAVKx5R3RdjeXQuRdKan2RNLsZn2U4qXYOgU4jqILz6u6MLSzlvzY1b5x9Xiz4sKHhM0UJ1NKKoFVx6ZEI8JqgANlrZ8KwCJ2j9pOmJN-e50-HzVhTFRvEahjCJB51O4oMmJ25V2yQtYOGfxV2b7C2aT9VKBruh0_znTbORz66pu9P47DMB5aP4SuF/s320/Hokky1.png';
-            var items = '';
-            var i ;
-            for(i=0; i < apiData.length; i++){
+              });
+            };
+          return function (table, name) {
+            var heading = "Laporan Sales Order";
+            var imgsrc1 =
+              "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhAVKx5R3RdjeXQuRdKan2RNLsZn2U4qXYOgU4jqILz6u6MLSzlvzY1b5x9Xiz4sKHhM0UJ1NKKoFVx6ZEI8JqgANlrZ8KwCJ2j9pOmJN-e50-HzVhTFRvEahjCJB51O4oMmJ25V2yQtYOGfxV2b7C2aT9VKBruh0_znTbORz66pu9P47DMB5aP4SuF/s320/Hokky1.png";
+            var items = "";
+            var i;
+            for (i = 0; i < apiData.length; i++) {
               items += `
                 <tr style="border: 1px solid black">
                   <td>${apiData[i].created_at}</td>
@@ -279,7 +283,7 @@ const ValidasiCetakRetur = () => {
                   <td>${apiData[i].payment_total}</td>
                   <td>${apiData[i].keterangan}</td>
                 </tr>
-              `
+              `;
             }
             var table = `
             <table className="table table-striped" id="account_table">
@@ -382,45 +386,43 @@ const ValidasiCetakRetur = () => {
             </table>
             `;
             var ctx = {
-              worksheet: name || 'Worksheet',
+              worksheet: name || "Worksheet",
               imgsrc1: imgsrc1,
               heading: heading,
-              table: table
-            }
+              table: table,
+            };
             var blob = new Blob([format(template, ctx)]);
             return blob;
-          }
-        })()
-        var blobURL = tableToExcel('account_table', 'data_order');
-        FileSaver.saveAs(blobURL, fileName+'.xls');
-       
+          };
+        })();
+        var blobURL = tableToExcel("account_table", "data_order");
+        FileSaver.saveAs(blobURL, fileName + ".xls");
       })
       .catch(function (error) {
         console.log(error);
       });
-  }
-  
+  };
+
   return (
     <>
-       
-        <Row>
-          <div className="col">
+      <Row>
+        <div className="col">
           <Card className="bg-secondary shadow">
-              <CardHeader className="bg-white border-0">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <h3>Cetak</h3>
-                  {/* <div style={{ textAlign: 'right' }}>
+            <CardHeader className="bg-white border-0">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h3>Cetak</h3>
+                {/* <div style={{ textAlign: 'right' }}>
                     <Link className="btn btn-info" to="/admin/sales-order/so-penawaran/create">
                       Tambah
                     </Link>
                   </div> */}
-                </div>
-              </CardHeader>
-              <CardBody>
-                      <Form>
-                        <Row md="12">
-                        {/* <Col md="" sm="6"> */}
-                            {/* <FormGroup>
+              </div>
+            </CardHeader>
+            <CardBody>
+              <Form>
+                <Row md="12">
+                  {/* <Col md="" sm="6"> */}
+                  {/* <FormGroup>
                               <Label>Start Date</Label>
                               <Input
                                 className="form-control-alternative"
@@ -445,23 +447,30 @@ const ValidasiCetakRetur = () => {
                               </Input>
                             </FormGroup>
                           </Col> */}
-                          <Col md="3">
-                            <FormGroup>
-                              <Label>Status</Label>
-                              <Input
-                                className="form-control-alternative"
-                                name="statusph"
-                                type="select"
-                                value={status}
-                                onChange={e => updateDataTable(1, perPage, currentSort, e.target.value)}
-                              >
-                                  <option value="" >--All--</option>
-                                  <option value="1">Kasir</option>
-                                  <option value="2">Proyek</option>
-                              </Input>
-                            </FormGroup>
-                          </Col>
-                          {/* <Col md="" sm="6">
+                  <Col md="3">
+                    <FormGroup>
+                      <Label>Status</Label>
+                      <Input
+                        className="form-control-alternative"
+                        name="statusph"
+                        type="select"
+                        value={status}
+                        onChange={(e) =>
+                          updateDataTable(
+                            1,
+                            perPage,
+                            currentSort,
+                            e.target.value
+                          )
+                        }
+                      >
+                        <option value="">--All--</option>
+                        <option value="1">Kasir</option>
+                        <option value="2">Proyek</option>
+                      </Input>
+                    </FormGroup>
+                  </Col>
+                  {/* <Col md="" sm="6">
                             <FormGroup>
                               <Label htmlFor="exampleFormControlSelect3">Status</Label>
                               <Input
@@ -479,7 +488,7 @@ const ValidasiCetakRetur = () => {
                               </Input>
                             </FormGroup>
                           </Col> */}
-                          {/* <Col md="" sm="6">
+                  {/* <Col md="" sm="6">
                           <Label>&nbsp;</Label>
                           <br></br>
                             <Button type='button' onClick={e => updateDataTable(1, perPage, currentSort, start, end, statusph)} className="btn btn-info"><i className="fa fa-filter"></i></Button>
@@ -504,125 +513,132 @@ const ValidasiCetakRetur = () => {
                             </UncontrolledDropdown>
                             </ButtonDropdown>
                           </Col> */}
-                        </Row>
-                      </Form>
-                      <ToolkitProvider
-                            rowNumber={rowIndex}
-                            data={allPenawaranSo}
-                            keyField="id"
-                            columns={[
-                            {
-                                dataField: "no",
-                                text: "#",
-                                sort: true,
-                                page: 1,
-                                formatter: (cell, row, index) => {
-                                let currentRow = ++index;
-                                return currentRow + rowIndex;
-                                },
-                            },
-                            {
-                                dataField: "created_at",
-                                text: "Tanggal Buat",
-                                sort: true,
-                              },
-                              {
-                                  dataField: "retur_code",
-                                  text: "Kode Retur",
-                                  sort: true,
-                              },
-                              {
-                                  dataField: "code_transaction",
-                                  text: "Kode Transaksi",
-                                  sort: true,
-                              },
-                              {
-                                  dataField: "qty_total",
-                                  text: "Jumlah Total",
-                                  sort: true,
-                              },
-                            {
-                                dataField: "status_ph",
-                                text: "Status",
-                                sort: true,
-                                formatter: (cell, row) => {
-                                  return row.status_ph === 3
-                                    ? 'proses'
-                                    : row.status_ph === 4
-                                    ? 'Tidak Setuju'
-                                    : 'Setuju';
-                                },
-                            },
-                            {
-                                dataField: "", text: "", formatter: (cell, row, index) => {
-                                return (
-                                  <UncontrolledDropdown nav>
-                                  <DropdownToggle className="nav-link pr-0" color="" tag="a">
-                                      <Link className="btn btn-danger" to="/#">
-                                         Tindakan
-                                      </Link>
-                                  </DropdownToggle>
-                                      <DropdownMenu>
-                                        {/* <Link to={redirectPrefix1 + row.id}
+                </Row>
+              </Form>
+              <ToolkitProvider
+                rowNumber={rowIndex}
+                data={allPenawaranSo}
+                keyField="id"
+                columns={[
+                  {
+                    dataField: "no",
+                    text: "#",
+                    sort: true,
+                    page: 1,
+                    formatter: (cell, row, index) => {
+                      let currentRow = ++index;
+                      return currentRow + rowIndex;
+                    },
+                  },
+                  {
+                    dataField: "created_at",
+                    text: "Tanggal Buat",
+                    sort: true,
+                  },
+                  {
+                    dataField: "retur_code",
+                    text: "Kode Retur",
+                    sort: true,
+                  },
+                  {
+                    dataField: "code_transaction",
+                    text: "Kode Transaksi",
+                    sort: true,
+                  },
+                  {
+                    dataField: "qty_total",
+                    text: "Jumlah Total",
+                    sort: true,
+                  },
+                  {
+                    dataField: "status_ph",
+                    text: "Status",
+                    sort: true,
+                    formatter: (cell, row) => {
+                      return row.status_ph === 3
+                        ? "proses"
+                        : row.status_ph === 4
+                        ? "Tidak Setuju"
+                        : "Setuju";
+                    },
+                  },
+                  {
+                    dataField: "",
+                    text: "",
+                    formatter: (cell, row, index) => {
+                      return (
+                        <UncontrolledDropdown nav>
+                          <DropdownToggle
+                            className="nav-link pr-0"
+                            color=""
+                            tag="a"
+                          >
+                            <Button className="btn btn-danger">Tindakan</Button>
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            {/* <Link to={redirectPrefix1 + row.id}
                                           id={"tooltip_" + row.id}>
                                         <DropdownItem>
                                           <i className="fas fa-print" /><span>Pembayaran</span>
                                         </DropdownItem>
                                         </Link> */}
-                                        {/* {updateButton && updateButton === "YES" && ( */}
-                                        <Link to={redirectPrefix1 + row.id}
-                                          id={"tooltip_" + row.id}>
-                                        <DropdownItem>
-                                          <i className="fas fa-book" /><span>PAYMENT</span>
-                                        </DropdownItem>
-                                        </Link>
-                                        {/* )} */}
-                                        {/* {updateButton && updateButton === "YES" && ( */}
-                                        {/* <Link  to={redirectPrefix + row.id}
+                            {/* {updateButton && updateButton === "YES" && ( */}
+                            <Link
+                              to={redirectPrefix1 + row.id}
+                              id={"tooltip_" + row.id}
+                            >
+                              <DropdownItem>
+                                <i className="fas fa-book" />
+                                <span>PAYMENT</span>
+                              </DropdownItem>
+                            </Link>
+                            {/* )} */}
+                            {/* {updateButton && updateButton === "YES" && ( */}
+                            {/* <Link  to={redirectPrefix + row.id}
                                           id={"tooltip_" + row.id}>
                                         <DropdownItem>
                                           <i className="fas fa-print" /><span>Cetak</span>
                                         </DropdownItem>
                                         </Link> */}
-                                        {/* )} */}
-                                  </DropdownMenu>
-                              </UncontrolledDropdown>
-                                // <ButtonGroup>
-                                //     <Button>
-                                //         <Link
-                                //         to={redirectPrefix + row.id}
-                                //         id={"tooltip_" + row.id}
-                                //         target="_blank"
-                                //         >
-                                //         <i className="fas fa-print" /> Cetak
-                                //         </Link>
-                                //     </Button>
-                                // </ButtonGroup>
-                                  )
-                                }
-                              },
-                            ]}
-                        >
-                            {(props) => (
-                            <div className="py-4 table-responsive">
-                                <BootstrapTable
-                                remote
-                                {...props.baseProps}
-                                bootstrap4={true}
-                                bordered={false}
-                                hover={true}
-                                pagination={paginationFactory({ ...paginationOption })}
-                                onTableChange={handleTableChange}
-                                />
-                            </div>
-                          )}
-                    </ToolkitProvider>
-              </CardBody>
-            </Card>
-          </div>
-        </Row>
+                            {/* )} */}
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                        // <ButtonGroup>
+                        //     <Button>
+                        //         <Link
+                        //         to={redirectPrefix + row.id}
+                        //         id={"tooltip_" + row.id}
+                        //         target="_blank"
+                        //         >
+                        //         <i className="fas fa-print" /> Cetak
+                        //         </Link>
+                        //     </Button>
+                        // </ButtonGroup>
+                      );
+                    },
+                  },
+                ]}
+              >
+                {(props) => (
+                  <div className="py-4 table-responsive">
+                    <BootstrapTable
+                      remote
+                      {...props.baseProps}
+                      bootstrap4={true}
+                      bordered={false}
+                      hover={true}
+                      pagination={paginationFactory({ ...paginationOption })}
+                      onTableChange={handleTableChange}
+                    />
+                  </div>
+                )}
+              </ToolkitProvider>
+            </CardBody>
+          </Card>
+        </div>
+      </Row>
     </>
   );
-}
+};
 
 export default ValidasiCetakRetur;

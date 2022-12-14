@@ -166,7 +166,7 @@ const ModalKartuStok = (props) => {
             Detail
          </Button>
         {/* // modal Semua Stok */}
-      {/* <Modal isOpen={modal} toggle={toggle} style={{ minWidth: "70%", top: "-20%" }}>
+      {/* <Modal isOpen={modal} toggle={toggle} style={{ minWidth: "70%"}}>
         <ModalHeader toggle={toggle} align="center"></ModalHeader>
         <ModalBody align="center">
         <font size="5"><b>Contoh Semua Stok</b></font><br></br><br></br><br></br>
@@ -243,7 +243,7 @@ const ModalKartuStok = (props) => {
         </ModalBody>
       </Modal> */}
         {/* kartu stok   */}
-      <Modal isOpen={modal1} toggle={toggle1} style={{ minWidth: "70%", top: "-20%" }}>
+      <Modal isOpen={modal1} toggle={toggle1} style={{ minWidth: "70%"}}>
         <ModalHeader toggle={toggle1} align="center"></ModalHeader>
         <ModalBody align="center">
         <font size="5"><b>Contoh Kartu Stok</b></font><br></br><br></br><br></br>

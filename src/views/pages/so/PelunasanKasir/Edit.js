@@ -1031,7 +1031,7 @@ export default function EditPelunasan(props) {
 				</Row>
 			</Container>
 			{/* modal pembayaran */}
-			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+			<Modal toggle={() => setIsOpen(!isOpen)} isOpen={isOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsOpen(!isOpen)}>Pecah Bayar</ModalHeader>
 				<ModalBody
 					cssModule={{

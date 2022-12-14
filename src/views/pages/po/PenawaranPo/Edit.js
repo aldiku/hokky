@@ -1075,7 +1075,7 @@ const getDurasiOperasional = (id) => {
           </Form>
           </div>
         </Row>
-        <Modal isOpen={isConfEditableOpen} fade={false} style={{ minWidth: "70%", top: "-20%" }}>
+        <Modal isOpen={isConfEditableOpen} fade={false} style={{ minWidth: "70%"}}>
 				<ModalHeader toggle={() => setIsConfEditableOpen(!isConfEditableOpen)}>Konfirmasi Izinkan Edit</ModalHeader>
 				<ModalBody
 					cssModule={{
