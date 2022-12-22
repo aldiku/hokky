@@ -61,12 +61,17 @@ export default function Promo() {
   const [end, setEnd] = useState("");
   const [status, setStatus] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [perPage, setPerpage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPages, setCurrentPages] = useState(0);
   useEffect(() => {
-    getById();
+    console.log("page changed");
     getUser();
-  }, [itemId]);
+  }, [page]);
 
-  const getById = () => {
+  const getById = (id) => {
+    setItemId(id);
     const headers = {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -108,8 +113,8 @@ export default function Promo() {
 
   const getUser = async () => {
     let filter = {
-      page: 1,
-      per_page: 10,
+      page: page,
+      per_page: perPage,
       warehouse_id: parseInt(warehouseId),
     };
     const data = filter;
@@ -119,7 +124,12 @@ export default function Promo() {
       data,
       { headers }
     );
-    setItemTotal(res.data.total_item);
+    if (res.data.status == 200) {
+      setItemTotal(res.data.total_item);
+      getById(res.data.response[0].id);
+      setCurrentPages(res.data.current_page + 1);
+      setTotalPages(res.data.total_page);
+    }
   };
 
   const getWarehouse = (id) => {
@@ -243,36 +253,39 @@ export default function Promo() {
                   <Row md="12">
                     <Col md="5">
                       <Button
-                        onClick={() => setItemId(4)}
+                        onClick={() => setPage(1)}
                         color="danger"
                         type="button"
                       >
                         First
                       </Button>
                       <Button
-                        onClick={() => setItemId((prev) => prev - 1)}
-                        disabled={itemId === 1}
+                        onClick={() => setPage((page) => page - 1)}
+                        disabled={page === 1}
                         color="success"
                         type="button"
                       >
                         <i className="ni ni-bold-left" /> Prev
                       </Button>
                       <Button
-                        onClick={() => setItemId((prev) => prev + 1)}
-                        disabled={itemId === itemTotal}
+                        onClick={() => setPage((page) => page + 1)}
+                        disabled={page >= totalPages}
                         color="success"
                         type="button"
                       >
                         Next <i className="ni ni-bold-right" />
                       </Button>
                       <Button
-                        onClick={() => setItemId(itemTotal)}
-                        disabled={itemTotal === null}
+                        onClick={() => setPage(totalPages)}
+                        disabled={page == totalPages}
                         color="warning"
                         type="button"
                       >
                         End
                       </Button>
+                      <span className="mx-2 text-muted">
+                        {currentPages}/{totalPages}
+                      </span>
                     </Col>
                     <Col md="3">
                       <FormGroup row>
