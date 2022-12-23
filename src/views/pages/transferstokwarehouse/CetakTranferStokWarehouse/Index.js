@@ -1,24 +1,25 @@
 /*eslint-disable*/
-import React, { useEffect, useState } from 'react';
-import { 
-    Card, 
-    Button, 
-    Row, 
-    Col, 
-    CardBody, 
-    CardHeader, 
-    Container,
-    ButtonGroup, 
-    Form, 
-    FormGroup, 
-    Label, 
-    Input 
-} from 'reactstrap';
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  CardBody,
+  CardHeader,
+  Container,
+  ButtonGroup,
+  Form,
+  FormGroup,
+  Label,
+  Input,
+} from "reactstrap";
 import { Link } from "react-router-dom";
-import axios from 'axios';
-import ToolkitProvider from 'react-bootstrap-table2-toolkit';
+import axios from "axios";
+import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
+import ModalCetakStokWarehouse from "./ModalCetakStockWarehouse";
 
 const CetakTransferStokWarehouse = () => {
   const token = localStorage.token;
@@ -32,7 +33,7 @@ const CetakTransferStokWarehouse = () => {
   const [perPage, setPerpage] = useState(10);
   const [totalItem, setTotalItem] = useState(0);
   const [currentSort, setCurrentSort] = useState("");
-  
+
   let paginationOption = {
     page: page,
     alwaysShowAllBtns: true,
@@ -54,7 +55,7 @@ const CetakTransferStokWarehouse = () => {
               aria-controls="datatable-basic"
               className="form-control form-control-sm"
               onChange={(e) => {
-                updateDataTable(page, e.target.value, currentSort)
+                updateDataTable(page, e.target.value, currentSort);
               }}
             >
               <option value="10">10</option>
@@ -67,7 +68,7 @@ const CetakTransferStokWarehouse = () => {
         </label>
       </div>
     ),
-  }
+  };
 
   const updateDataTable = (page, perPage, sort, tw_code) => {
     getTSW(page, perPage, sort, tw_code);
@@ -77,34 +78,30 @@ const CetakTransferStokWarehouse = () => {
     setCurrentSort(sort);
     setTwCode(tw_code);
     setDescription(description);
-  }
+  };
 
   const handleTableChange = (type, { sortField, sortOrder }) => {
     if (type === "sort") {
-      let sort = `${sortField} ${sortOrder}`
-      updateDataTable(page, perPage, sort, tw_code)
+      let sort = `${sortField} ${sortOrder}`;
+      updateDataTable(page, perPage, sort, tw_code);
     }
-  }
+  };
 
-  
   useEffect(() => {
     getTSW(page, perPage, currentSort);
   }, []);
 
   // fungsi dari ambil data
-  const getTSW = (page, perPage, currentSort, tw_code=null) => {
-    
-    let filter = { 
-      
-      page: page, 
+  const getTSW = (page, perPage, currentSort, tw_code = null) => {
+    let filter = {
+      page: page,
       per_page: perPage,
       status_d: 5,
-      status_m: 5, 
-      warehouse_id : parseInt(warehouse),
-      
+      status_m: 5,
+      warehouse_id: parseInt(warehouse),
     };
     if (tw_code !== null) {
-      filter = Object.assign(filter, { tw_code: tw_code })
+      filter = Object.assign(filter, { tw_code: tw_code });
     }
     const data = filter;
     const headers = {
@@ -112,9 +109,13 @@ const CetakTransferStokWarehouse = () => {
       Authorization: `Bearer ${token}`,
     };
     axios
-      .post(`${process.env.REACT_APP_API_BASE_URL}/transfer-warehouse/page`, data, {
-        headers,
-      })
+      .post(
+        `${process.env.REACT_APP_API_BASE_URL}/transfer-warehouse/page`,
+        data,
+        {
+          headers,
+        }
+      )
       .then((data) => {
         setAllTransferStokWarehouse(data.data.response);
         setPage(data.data.current_page + 1);
@@ -130,120 +131,157 @@ const CetakTransferStokWarehouse = () => {
     setTwCode("");
     setDescription("");
     updateDataTable(1, perPage, currentSort, "", "");
-  }
+  };
+
+  const [openModalCetak, setOpenModalCetak] = useState(false);
+  const [dataModalCetak, setDataModalCetak] = useState({
+    id: 0,
+  });
+  const toggleModal = () => setOpenModalCetak(!openModalCetak);
+
+  const displayModalCetak = (id) => {
+    setDataModalCetak({
+      id: id,
+    });
+    setOpenModalCetak(true);
+  };
 
   return (
     <div>
-        <Row>
-          <div className="col">
-            <Card className="bg-secondary shadow">
-              <CardHeader className="bg-white border-0">
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                  <h3>Cetak Transfer Stok Warehouse</h3>
-                </div>
-              </CardHeader>
-              <CardBody>
-                      <Form>
-                        <Row md="12">
-                          <Col md="3">
-                            <FormGroup>
-                              <Label htmlFor="exampleFormControlSelect3">Kode Transfer Stok</Label>
-                              <Input
-                                type="text"
-                                placeholder="Masukan Kode Invoice"
-                                value={tw_code}
-                                onChange={e => updateDataTable(1, perPage, currentSort, e.target.value)}
-                              />
-                            </FormGroup>
-                          </Col>
-                        </Row>
-                        <Row>
-                          <Col>
-                            <Button type="button" onClick={reset} color="secondary">Reset</Button>
-                          </Col>
-                        </Row>
-                      </Form>
-                    <ToolkitProvider
-                            rowNumber={rowIndex}
-                            data={allTransferStokWarehouse}
-                            keyField="id"
-                            columns={[
-                            {
-                                dataField: "no",
-                                text: "#",
-                                sort: true,
-                                page: 1,
-                                formatter: (cell, row, index) => {
-                                let currentRow = ++index;
-                                return currentRow + rowIndex;
-                                },
-                            },
-                            {
-                                dataField: "created_at",
-                                text: "Tanggal Buat",
-                                sort: true,
-                            },
-                            {
-                                dataField: "tw_code",
-                                text: "Kode Transfer Warehouse",
-                                sort: true,
-                            },
-                            {
-                                dataField: "keterangan",
-                                text: "Keterangan",
-                                sort: true,
-                            },
-                            {
-                                dataField: "status_d",
-                                text: "Status Direktur",
-                                sort: true,
-                                formatter: (cell, row) => {
-                                  return row.status_d === 3
-                                    ? 'proses'
-                                    : row.status_d === 4
-                                    ? 'Tidak Setuju'
-                                    : 'Setuju';
-                                },
-                            },
-                            {
-                                dataField: "", text: "", formatter: (cell, row, index) => {
-                                return (
-                                    <ButtonGroup>
-                                    <Button>
-                                        <Link
-                                        to={redirectPrefix + row.id}
-                                        id={"tooltip_" + row.id}
-                                        target="_blank"
-                                        >
-                                        <i className="fas fa-print" /> Cetak
-                                        </Link>
-                                    </Button>
-                                    </ButtonGroup>
-                                )
-                                }
-                            },
-                            ]}
-                        >
-                            {(props) => (
-                            <div className="py-4 table-responsive">
-                                <BootstrapTable
-                                remote
-                                {...props.baseProps}
-                                bootstrap4={true}
-                                bordered={false}
-                                hover={true}
-                                pagination={paginationFactory({ ...paginationOption })}
-                                onTableChange={handleTableChange}
-                                />
-                            </div>
-                            )}
-                    </ToolkitProvider>
-              </CardBody>
-            </Card>
-          </div>
-        </Row>
+      <Row>
+        <div className="col">
+          <Card className="bg-secondary shadow">
+            <CardHeader className="bg-white border-0">
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <h3>Cetak Transfer Stok Warehouse</h3>
+              </div>
+            </CardHeader>
+            <CardBody>
+              <Form>
+                <Row md="12">
+                  <Col md="3">
+                    <FormGroup>
+                      <Label htmlFor="exampleFormControlSelect3">
+                        Kode Transfer Stok
+                      </Label>
+                      <Input
+                        type="text"
+                        placeholder="Masukan Kode Invoice"
+                        value={tw_code}
+                        onChange={(e) =>
+                          updateDataTable(
+                            1,
+                            perPage,
+                            currentSort,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </FormGroup>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col>
+                    <Button type="button" onClick={reset} color="secondary">
+                      Reset
+                    </Button>
+                  </Col>
+                </Row>
+              </Form>
+              <ToolkitProvider
+                rowNumber={rowIndex}
+                data={allTransferStokWarehouse}
+                keyField="id"
+                columns={[
+                  {
+                    dataField: "no",
+                    text: "#",
+                    sort: true,
+                    page: 1,
+                    formatter: (cell, row, index) => {
+                      let currentRow = ++index;
+                      return currentRow + rowIndex;
+                    },
+                  },
+                  {
+                    dataField: "created_at",
+                    text: "Tanggal Buat",
+                    sort: true,
+                  },
+                  {
+                    dataField: "tw_code",
+                    text: "Kode Transfer Warehouse",
+                    sort: true,
+                  },
+                  {
+                    dataField: "keterangan",
+                    text: "Keterangan",
+                    sort: true,
+                  },
+                  {
+                    dataField: "status_d",
+                    text: "Status Direktur",
+                    sort: true,
+                    formatter: (cell, row) => {
+                      return row.status_d === 3
+                        ? "proses"
+                        : row.status_d === 4
+                        ? "Tidak Setuju"
+                        : "Setuju";
+                    },
+                  },
+                  {
+                    dataField: "",
+                    text: "",
+                    formatter: (cell, row, index) => {
+                      return (
+                        <ButtonGroup>
+                          {/* <Button>
+                            <Link
+                              to={redirectPrefix + row.id}
+                              id={"tooltip_" + row.id}
+                              target="_blank"
+                            >
+                              <i className="fas fa-print" /> Cetak
+                            </Link>
+                          </Button> */}
+                          <Button onClick={() => displayModalCetak(row.id)}>
+                            <i className="fas fa-book" />
+                            <span>Cetak</span>
+                          </Button>
+                        </ButtonGroup>
+                      );
+                    },
+                  },
+                ]}
+              >
+                {(props) => (
+                  <div className="py-4 table-responsive">
+                    <BootstrapTable
+                      remote
+                      {...props.baseProps}
+                      bootstrap4={true}
+                      bordered={false}
+                      hover={true}
+                      pagination={paginationFactory({ ...paginationOption })}
+                      onTableChange={handleTableChange}
+                    />
+                  </div>
+                )}
+              </ToolkitProvider>
+            </CardBody>
+          </Card>
+        </div>
+      </Row>
+      {openModalCetak && (
+        <ModalCetakStokWarehouse
+          open={openModalCetak}
+          data={dataModalCetak}
+          toggle={toggleModal}
+        />
+      )}
     </div>
   );
-}
+};
 
 export default CetakTransferStokWarehouse;
