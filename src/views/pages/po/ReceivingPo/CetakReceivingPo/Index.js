@@ -17,11 +17,11 @@ import {
   UncontrolledDropdown,
   DropdownToggle,
 } from "reactstrap";
-import { Link } from "react-router-dom";
 import axios from "axios";
 import ToolkitProvider from "react-bootstrap-table2-toolkit";
 import BootstrapTable from "react-bootstrap-table-next";
 import paginationFactory from "react-bootstrap-table2-paginator";
+import ModalCetakReceivingPo from "./ModalCetakReceivingPo";
 
 const ReceivingPo = () => {
   const token = localStorage.token;
@@ -126,6 +126,19 @@ const ReceivingPo = () => {
     setUomCode("");
     setDescription("");
     updateDataTable(1, perPage, currentSort, "", "");
+  };
+
+  const [openModalCetak, setOpenModalCetak] = useState(false);
+  const [dataModalCetak, setDataModalCetak] = useState({
+    id: 0,
+  });
+  const toggle = () => setOpenModalCetak(!openModalCetak);
+
+  const displayModalCetak = (id) => {
+    setDataModalCetak({
+      id: id,
+    });
+    setOpenModalCetak(true);
   };
 
   return (
@@ -268,16 +281,12 @@ const ReceivingPo = () => {
                                               <i className="fas fa-book" /><span>Detail</span>
                                             </DropdownItem>
                                             </Link> */}
-                            <Link
-                              to={redirectPrefix + row.id}
-                              id={"tooltip_" + row.id}
-                              target="_blank"
+                            <DropdownItem
+                              onClick={() => displayModalCetak(row.id)}
                             >
-                              <DropdownItem>
-                                <i className="fas fa-print" />
-                                <span>Cetak</span>
-                              </DropdownItem>
-                            </Link>
+                              <i className="fas fa-book" />
+                              <span>Cetak</span>
+                            </DropdownItem>
                           </DropdownMenu>
                         </UncontrolledDropdown>
                       );
@@ -303,6 +312,13 @@ const ReceivingPo = () => {
           </Card>
         </div>
       </Row>
+      {openModalCetak && (
+        <ModalCetakReceivingPo
+          open={openModalCetak}
+          data={dataModalCetak}
+          toggle={toggle}
+        />
+      )}
     </div>
   );
 };

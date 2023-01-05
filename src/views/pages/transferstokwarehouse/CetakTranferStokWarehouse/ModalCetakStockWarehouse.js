@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "reactstrap";
 import axios from "axios";
-import { PDFViewer } from "@react-pdf/renderer";
-import { Document, Page, Text, View } from "@react-pdf/renderer";
+import { PDFViewer, Document, Page, Text, View } from "@react-pdf/renderer";
 import s from "views/components/stylePdf";
 import PdfKop from "views/components/PdfKop";
 import {
@@ -12,21 +11,22 @@ import {
   TableHeader,
   DataTableCell,
 } from "@david.kucsai/react-pdf-table";
+import PdfTableHeader from "views/components/PdfTableHeader";
 
 const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
   const token = localStorage.token;
-  const today = new Date();
-  const nama = localStorage.name;
-  const username = localStorage.username;
+  // const today = new Date();
+  // const nama = localStorage.name;
+  // const username = localStorage.username;
+  const [warehouse, setWarehouse] = useState("");
   const [tw, setTw] = useState("");
   const [code, setCode] = useState("");
   const [cabang, setCabang] = useState("");
   const [waktu, setWaktu] = useState("");
-  const [warehouse, setWarehouse] = useState("");
   const [keterangan, setKeterangan] = useState("");
   const [manajer, setManajer] = useState("");
   const [direktur, setDirektur] = useState("");
-  const [listitem, setListItem] = useState("");
+  const [listItem, setListItem] = useState("");
 
   useEffect(() => {
     getById();
@@ -57,7 +57,6 @@ const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
         console.log(error);
       });
   };
-
   const PdfDokumen = () => (
     <Document>
       <Page size="A4" style={s.body}>
@@ -68,51 +67,72 @@ const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
           </Text>
           <View style={[s.flexBetween, s.my1]}>
             <View>
-              <Text style={s.fs10}>Kode TW : {tw}</Text>
-              <Text style={s.fs10}>Issuing Date : {waktu}</Text>
-              <Text style={s.fs10}>Keterangan : {keterangan}</Text>
+              <PdfInfo title="Kode TW" value={tw} />
+              <PdfInfo title="Issuing Date" value={waktu} />
+              <PdfInfo title="Keterangan" value={keterangan} />
             </View>
             <View>
-              <Text style={s.fs10}>Kode Cabang : {code}</Text>
-              <Text style={s.fs10}>Nama Cabang : {cabang}</Text>
+              <PdfInfo title="Kode Cabang" value={code} />
+              <PdfInfo title="Nama Cabang" value={cabang} />
             </View>
           </View>
         </View>
-        <Table data={listitem} style={s.my1}>
-          <TableHeader textAlign={"center"}>
-            <TableCell style={s.fs08}>#</TableCell>
-            <TableCell style={s.fs08}>Nama Item</TableCell>
-            <TableCell style={s.fs08}>Barcode</TableCell>
-            <TableCell style={s.fs08}>Qty</TableCell>
-            <TableCell style={s.fs08}>Satuan</TableCell>
-          </TableHeader>
-          <TableBody textAlign={"center"}>
-            <DataTableCell getContent={(r) => r.no} style={s.fs08} />
-            <DataTableCell getContent={(r) => r.item_name} style={s.fs08} />
-            <DataTableCell
-              getContent={(r) => r.barcode}
-              style={[s.fs08, s.textCenter]}
+        <PdfTableHeader
+          data={[
+            {
+              title: "No",
+              width: "7%",
+            },
+            {
+              title: "Barcode",
+              width: "18%",
+            },
+            {
+              title: "Nama",
+              width: "45%",
+            },
+            {
+              title: "Qty",
+              width: "15%",
+            },
+            {
+              title: "Satuan",
+              width: "15%",
+            },
+          ]}
+        />
+        {listItem.map((item, index) => {
+          return (
+            <PdfTableRow
+              key={index}
+              data={[
+                { title: index + 1, width: "7%" },
+                { title: item.item_code, width: "18%" },
+                { title: item.item_name, width: "45%", align: "left" },
+                { title: item.qty, width: "15%" },
+                { title: item.satuan, width: "15%" },
+              ]}
             />
-            <DataTableCell
-              getContent={(r) => r.qty}
-              style={[s.fs08, s.textCenter]}
-            />
-            <DataTableCell
-              getContent={(r) => r.satuan}
-              style={[s.fs08, s.textCenter]}
-            />
-          </TableBody>
-        </Table>
-        <View style={[s.flex, s.flexBetween, s.my1]}>
+          );
+        })}
+        <View>
+          <Text style={[s.my1, s.textCenter, s.fs10]}>
+            Terms of Price, delivery & shipping required
+          </Text>
+        </View>
+        <View style={[s.flexBetween, s.my1]}>
           <View>
-            <Text style={s.fs10}>Manajer : {manajer}</Text>
-            <Text style={s.fs10}>Signature : ---------------------------</Text>
+            <PdfInfo title="Manajer" value={manajer} />
+            <View style={s.my1} />
+            <PdfInfo title="Signature" value="--------------" />
           </View>
           <View>
-            <Text style={s.fs10}>Direktur : {direktur}</Text>
-            <Text style={s.fs10}>Signature : ---------------------------</Text>
+            <PdfInfo title="Direktur" value={direktur} />
+            <View style={s.my1} />
+            <PdfInfo title="Signature" value="--------------" />
           </View>
         </View>
+
         <Text
           style={s.pageNumber}
           render={({ pageNumber, totalPages }) =>
@@ -129,7 +149,11 @@ const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
         <span>Cetak</span>
       </ModalHeader>
       <ModalBody>
-        <PDFViewer className="w-100" style={{ minHeight: "400px" }}>
+        <PDFViewer
+          className="w-100"
+          style={{ minHeight: "400px" }}
+          // showToolbar={false}
+        >
           <PdfDokumen />
         </PDFViewer>
       </ModalBody>

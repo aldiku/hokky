@@ -8,6 +8,7 @@ const KopSurat = ({ warehouseName }) => {
             <img
               style={{ width: "20%" }}
               src={require("assets/img/theme/Hokky1.png").default}
+              alt="logo"
             />
           </td>
           <td style={{ fontSize: ".8em" }}>

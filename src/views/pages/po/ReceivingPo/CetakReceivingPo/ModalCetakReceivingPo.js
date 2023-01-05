@@ -8,30 +8,34 @@ import PdfInfo from "views/components/PdfInfo";
 import PdfTableHeader from "views/components/PdfTableHeader";
 import PdfTableRow from "views/components/PdfTableRow";
 
-const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
+const ModalCetakReceivingPo = ({ open, toggle, data }) => {
   const today = new Date();
   const token = localStorage.token;
   const username = localStorage.username;
   const warehouse = localStorage.warehouse;
+  const [isLoading, setLoading] = useState(false);
+  const [harga, setHarga] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [customer, setCustomer] = useState("");
+  const [pengiriman, setPengiriman] = useState([]);
+  const [qty, setQty] = useState(0);
   const [savedItems, setSavedItems] = useState([]);
+  const [codeso, setCodeSo] = useState("");
   const [usernamea, setUsernamea] = useState("");
-  const [address, setAddress] = useState("");
-  const [warehouserfq, setWarehouseRfq] = useState("");
-  const [codepo, setCodePo] = useState("");
-  const [payment_method, setPaymentMethod] = useState([]);
-  const [keterangan, setKeterangan] = useState("");
-  const [supplier, setSupplier] = useState("");
-  const [jangkaWaktu, setJangkaWaktu] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [coderfq, setCodeRfq] = useState("");
-  const [ongkir, setOngkir] = useState(0);
-  const [lainnya, setLainnya] = useState(0);
+  const [logo, setLogo] = useState();
+  const [warehousename, setWarehouseName] = useState();
+  const [creator, setCreator] = useState();
+  const [codereceiving, setCodeReceiving] = useState();
+  const [codepo, setCodePO] = useState();
+  const [supplier, setSupplier] = useState();
+  const [ongkir, setOngkir] = useState();
+  const [lainnya, setLainnya] = useState();
+  const [keterangan, setKeterangan] = useState();
+  const [validator, setValidator] = useState();
+  const [created, setCreated] = useState();
+  const [countdown, setCountdown] = useState();
+  const [rowIndex, setRowIndex] = useState(0);
   const [listItem, setListItem] = useState([]);
-  const [waktu, setWaktu] = useState([]);
-  const [page, setPage] = useState(1);
-  const [perPage, setPerpage] = useState(10);
-  const [validator, setValidator] = useState("");
-
   useEffect(() => {
     getById();
   }, []);
@@ -42,24 +46,24 @@ const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
       Authorization: `Bearer ${token}`,
     };
     axios
-      .get(`${process.env.REACT_APP_API_BASE_URL}/rfq-po/cetak/${data.id}`, {
-        headers,
-      })
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/receiving-po/cetak/${data.id}`,
+        { headers }
+      )
       .then((data) => {
-        // const rfqpo = data.data.response.rfq-po
-        // const listitem = data.data.response.list
+        setWarehouseName(data.data.response.receivingpo.warehouse);
+        setLogo(data.data.response.receivingpo.logo);
+        setCreator(data.data.response.receivingpo.creator);
+        setCodeReceiving(data.data.response.receivingpo.receiving_code);
+        setCodePO(data.data.response.receivingpo.code_po);
+        setSupplier(data.data.response.receivingpo.supplier);
+        setOngkir(data.data.response.receivingpo.ongkir);
+        setLainnya(data.data.response.receivingpo.lainnya);
+        setKeterangan(data.data.response.receivingpo.keterangan);
+        setValidator(data.data.response.receivingpo.validator);
+        setCreated(data.data.response.receivingpo.created);
+        setCountdown(data.data.response.receivingpo.countdown);
         setListItem(data.data.response.list);
-        setCodeRfq(data.data.response.rfqpo.rfq_code);
-        setWarehouseRfq(data.data.response.rfqpo.warehouse);
-        setSupplier(data.data.response.rfqpo.supplier);
-        setPaymentMethod(data.data.response.rfqpo.payment_method);
-        setJangkaWaktu(data.data.response.rfqpo.jangka_waktu);
-        setWaktu(data.data.response.rfqpo.created);
-        setValidator(data.data.response.rfqpo.validator);
-        setTotalPrice(data.data.response.rfqpo.price_total);
-        setKeterangan(data.data.response.rfqpo.keterangan);
-        setOngkir(data.data.response.rfqpo.ongkir);
-        setLainnya(data.data.response.rfqpo.lainnya);
       })
       .catch(function (error) {
         console.log(error);
@@ -71,21 +75,16 @@ const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
       <Page size="A4" style={s.body}>
         <PdfKop />
         <View>
-          <Text style={[s.textCenter, s.fs16, s.my1]}>RFQ</Text>
+          <Text style={[s.textCenter, s.fs16, s.my1]}>RECEIVING PO</Text>
           <View style={[s.flexBetween, s.my1]}>
             <View>
-              <PdfInfo title="Kode RFQ" value={coderfq} />
-              <PdfInfo title="Issuing Date" value={waktu} />
-              <PdfInfo title="Warehouse" value={warehouserfq} />
+              <PdfInfo title="Kode PO" value={codepo} />
+              <PdfInfo title="Issuing Date" value={created} />
+              <PdfInfo title="Kode Receiving" value={codereceiving} />
               <PdfInfo title="Keterangan" value={keterangan} />
             </View>
             <View>
               <PdfInfo title="Supplier Name" value={supplier} />
-              <PdfInfo title="Address" value={address} />
-              <PdfInfo title="Telephone" value="-" />
-              <PdfInfo title="Email" value="-" />
-              <PdfInfo title="Name Sales" value={usernamea} />
-              <PdfInfo title="Npwp" value="-" />
             </View>
           </View>
         </View>
@@ -134,7 +133,7 @@ const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
         </View>
         <View style={[s.flexBetween, s.my1]}>
           <View>
-            <PdfInfo title="Purchasing Head" value={validator} />
+            <PdfInfo title="Kepala Gudang" value={validator} />
             <View style={s.my1} />
             <PdfInfo title="Signature" value="--------------" />
           </View>
@@ -175,4 +174,4 @@ const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
   );
 };
 
-export default ModalCetakPermintaanBarang;
+export default ModalCetakReceivingPo;

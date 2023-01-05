@@ -57,14 +57,26 @@ const stylePdf = StyleSheet.create({
     justifyContent: "space-between",
     alignSelf: "stretch",
   },
+  fs07: {
+    fontSize: 7,
+  },
   fs08: {
     fontSize: 8,
+  },
+  fs09: {
+    fontSize: 9,
   },
   fs10: {
     fontSize: 10,
   },
   fs11: {
     fontSize: 11,
+  },
+  fs12: {
+    fontSize: 12,
+  },
+  fs14: {
+    fontSize: 14,
   },
   fs16: {
     fontSize: 16,
@@ -78,18 +90,51 @@ const stylePdf = StyleSheet.create({
   textMuted: {
     color: "#7E6767",
   },
+  fwbold: {
+    fontWeight: "bold",
+  },
   textCenter: {
     alignContent: "center",
     alignItems: "center",
     textAlign: "center",
   },
+  textRight: {
+    alignContent: "right",
+    alignItems: "right",
+    textAlign: "right",
+  },
+  borderL: {
+    borderLeftWidth: 1,
+    borderColor: "#000",
+  },
+  borderR: {
+    borderRightWidth: 1,
+    borderColor: "#000",
+  },
+  border: {
+    borderWidth: 1,
+    borderColor: "#000",
+  },
   borderBottom: {
     borderBottomWidth: 1,
+    borderColor: "#000",
+  },
+  borderTop: {
+    borderTopWidth: 1,
+    borderColor: "#000",
+  },
+  borderX: {
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
     borderColor: "#000",
   },
   my1: {
     marginTop: 10,
     marginBottom: 10,
+  },
+  p02: {
+    paddingHorizontal: 2,
+    paddingVertical: 2,
   },
   px02: {
     paddingHorizontal: 2,
