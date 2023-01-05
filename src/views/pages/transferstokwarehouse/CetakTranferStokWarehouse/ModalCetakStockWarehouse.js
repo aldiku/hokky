@@ -4,14 +4,9 @@ import axios from "axios";
 import { PDFViewer, Document, Page, Text, View } from "@react-pdf/renderer";
 import s from "views/components/stylePdf";
 import PdfKop from "views/components/PdfKop";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  DataTableCell,
-} from "@david.kucsai/react-pdf-table";
+import PdfInfo from "views/components/PdfInfo";
 import PdfTableHeader from "views/components/PdfTableHeader";
+import PdfTableRow from "views/components/PdfTableRow";
 
 const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
   const token = localStorage.token;
