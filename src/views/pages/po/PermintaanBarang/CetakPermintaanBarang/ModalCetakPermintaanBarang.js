@@ -7,12 +7,14 @@ import PdfKop from "views/components/PdfKop";
 import PdfInfo from "views/components/PdfInfo";
 import PdfTableHeader from "views/components/PdfTableHeader";
 import PdfTableRow from "views/components/PdfTableRow";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
   const today = new Date();
   const token = localStorage.token;
   const username = localStorage.username;
   const warehouse = localStorage.warehouse;
+  const [isLoading, setLoading] = useState(true);
   const [savedItems, setSavedItems] = useState([]);
   const [usernamea, setUsernamea] = useState("");
   const [address, setAddress] = useState("");
@@ -60,6 +62,7 @@ const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
         setKeterangan(data.data.response.rfqpo.keterangan);
         setOngkir(data.data.response.rfqpo.ongkir);
         setLainnya(data.data.response.rfqpo.lainnya);
+        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -163,13 +166,19 @@ const ModalCetakPermintaanBarang = ({ open, toggle, data }) => {
         </div>
       </ModalHeader>
       <ModalBody className="p-0">
-        <PDFViewer
-          className="w-100"
-          style={{ minHeight: "400px" }}
-          // showToolbar={false}
-        >
-          <PdfDokumen />
-        </PDFViewer>
+        {isLoading ? (
+          <View style={s.textCenter}>
+            <CircularProgress color="inherit" size={20} />
+          </View>
+        ) : (
+          <PDFViewer
+            className="w-100"
+            style={{ minHeight: "500px" }}
+            // showToolbar={false}
+          >
+            <PdfDokumen />
+          </PDFViewer>
+        )}
       </ModalBody>
     </Modal>
   );

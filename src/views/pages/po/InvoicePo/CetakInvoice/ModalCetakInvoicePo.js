@@ -7,13 +7,14 @@ import PdfKop from "views/components/PdfKop";
 import PdfInfo from "views/components/PdfInfo";
 import PdfTableHeader from "views/components/PdfTableHeader";
 import PdfTableRow from "views/components/PdfTableRow";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ModalCetakInvoicePo = ({ open, toggle, data }) => {
   const today = new Date();
   const token = localStorage.token;
   const username = localStorage.username;
   const warehouse = localStorage.warehouse;
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [harga, setHarga] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [customer, setCustomer] = useState("");
@@ -60,6 +61,8 @@ const ModalCetakInvoicePo = ({ open, toggle, data }) => {
         setValidator(data.data.response.invoicepo.validator1);
         setValidator1(data.data.response.invoicepo.validator2);
         setListItem(data.data.response.list);
+        setTotalPrice(data.data.response.invoicepo.price_total);
+        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -152,6 +155,12 @@ const ModalCetakInvoicePo = ({ open, toggle, data }) => {
             />
           );
         })}
+        <PdfTableRow
+          data={[
+            { title: "Sub Total", width: "90%", align: "right" },
+            { title: formatRupiah(totalPrice), width: "10%" },
+          ]}
+        />
         <View>
           <Text style={[s.my1, s.textCenter, s.fs10]}>
             Terms of Price, delivery & shipping required
@@ -188,13 +197,19 @@ const ModalCetakInvoicePo = ({ open, toggle, data }) => {
         </div>
       </ModalHeader>
       <ModalBody className="p-0">
-        <PDFViewer
-          className="w-100"
-          style={{ minHeight: "400px" }}
-          // showToolbar={false}
-        >
-          <PdfDokumen />
-        </PDFViewer>
+        {isLoading ? (
+          <View style={s.textCenter}>
+            <CircularProgress color="inherit" size={20} />
+          </View>
+        ) : (
+          <PDFViewer
+            className="w-100"
+            style={{ minHeight: "500px" }}
+            // showToolbar={false}
+          >
+            <PdfDokumen />
+          </PDFViewer>
+        )}
       </ModalBody>
     </Modal>
   );

@@ -7,12 +7,14 @@ import PdfKop from "views/components/PdfKop";
 import PdfInfo from "views/components/PdfInfo";
 import PdfTableHeader from "views/components/PdfTableHeader";
 import PdfTableRow from "views/components/PdfTableRow";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
   const token = localStorage.token;
   // const today = new Date();
   // const nama = localStorage.name;
   // const username = localStorage.username;
+  const [isLoading, setIsLoading] = useState(true);
   const [warehouse, setWarehouse] = useState("");
   const [tw, setTw] = useState("");
   const [code, setCode] = useState("");
@@ -47,6 +49,7 @@ const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
         setManajer(data.data.response.tw.manajer);
         setDirektur(data.data.response.tw.direktur);
         setListItem(data.data.response.list);
+        setIsLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -144,13 +147,19 @@ const ModalCetakStokWarehouse = ({ open, toggle, data }) => {
         <span>Cetak</span>
       </ModalHeader>
       <ModalBody>
-        <PDFViewer
-          className="w-100"
-          style={{ minHeight: "400px" }}
-          // showToolbar={false}
-        >
-          <PdfDokumen />
-        </PDFViewer>
+        {isLoading ? (
+          <View style={s.textCenter}>
+            <CircularProgress color="inherit" size={20} />
+          </View>
+        ) : (
+          <PDFViewer
+            className="w-100"
+            style={{ minHeight: "500px" }}
+            // showToolbar={false}
+          >
+            <PdfDokumen />
+          </PDFViewer>
+        )}
       </ModalBody>
     </Modal>
   );

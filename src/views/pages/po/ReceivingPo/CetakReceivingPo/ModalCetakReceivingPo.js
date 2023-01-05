@@ -7,13 +7,14 @@ import PdfKop from "views/components/PdfKop";
 import PdfInfo from "views/components/PdfInfo";
 import PdfTableHeader from "views/components/PdfTableHeader";
 import PdfTableRow from "views/components/PdfTableRow";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const ModalCetakReceivingPo = ({ open, toggle, data }) => {
   const today = new Date();
   const token = localStorage.token;
   const username = localStorage.username;
   const warehouse = localStorage.warehouse;
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [harga, setHarga] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [customer, setCustomer] = useState("");
@@ -64,6 +65,7 @@ const ModalCetakReceivingPo = ({ open, toggle, data }) => {
         setCreated(data.data.response.receivingpo.created);
         setCountdown(data.data.response.receivingpo.countdown);
         setListItem(data.data.response.list);
+        setLoading(false);
       })
       .catch(function (error) {
         console.log(error);
@@ -162,13 +164,19 @@ const ModalCetakReceivingPo = ({ open, toggle, data }) => {
         </div>
       </ModalHeader>
       <ModalBody className="p-0">
-        <PDFViewer
-          className="w-100"
-          style={{ minHeight: "400px" }}
-          // showToolbar={false}
-        >
-          <PdfDokumen />
-        </PDFViewer>
+        {isLoading ? (
+          <View style={s.textCenter}>
+            <CircularProgress color="inherit" size={20} />
+          </View>
+        ) : (
+          <PDFViewer
+            className="w-100"
+            style={{ minHeight: "500px" }}
+            // showToolbar={false}
+          >
+            <PdfDokumen />
+          </PDFViewer>
+        )}
       </ModalBody>
     </Modal>
   );
